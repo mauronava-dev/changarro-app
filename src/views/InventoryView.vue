@@ -67,7 +67,7 @@ const filteredProducts = computed(() => {
         <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
       </RouterLink>
       <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         Inventario
       </h1>
@@ -89,13 +89,13 @@ const filteredProducts = computed(() => {
         v-model="searchQuery"
         type="text"
         placeholder="Buscar producto..."
-        class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-4 text-[18px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+        class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-4 text-[15px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
       />
     </div>
 
     <!-- Loading -->
     <div v-if="store.isLoading" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
@@ -117,17 +117,17 @@ const filteredProducts = computed(() => {
             :alt="product.name"
             class="w-full h-full object-cover"
           />
-          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[28px]"
+          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[19px]"
             >inventory_2</span
           >
         </div>
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
-          <h3 class="text-[16px] font-bold font-display text-on-surface truncate">
+          <h3 class="text-[14px] font-bold font-display text-on-surface truncate">
             {{ product.name }}
           </h3>
-          <p class="mt-1 text-[20px] font-bold text-surface-tint">
+          <p class="mt-1 text-[17px] font-bold text-surface-tint">
             ${{ formatPrice(product.price) }}
           </p>
           <p class="mt-0.5 text-[13px] text-on-surface-variant/60 capitalize">
@@ -160,13 +160,13 @@ const filteredProducts = computed(() => {
       v-else-if="!searchQuery.trim() && filteredProducts.length === 0"
       class="flex flex-col items-center justify-center py-16 gap-4"
     >
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50"
         >inventory_2</span
       >
-      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+      <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
         Tu inventario está vacío
       </p>
-      <p class="text-[16px] text-on-surface-variant/60 text-center">
+      <p class="text-[14px] text-on-surface-variant/60 text-center">
         Agrega tu primer producto tocando el botón +
       </p>
     </div>
@@ -176,10 +176,10 @@ const filteredProducts = computed(() => {
       v-else-if="searchQuery.trim() && filteredProducts.length === 0"
       class="flex flex-col items-center justify-center py-16 gap-4"
     >
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50"
         >search_off</span
       >
-      <p class="text-[18px] text-on-surface-variant font-sans text-center">
+      <p class="text-[15px] text-on-surface-variant font-sans text-center">
         No se encontraron productos con "{{ searchQuery }}"
       </p>
     </div>
@@ -190,7 +190,7 @@ const filteredProducts = computed(() => {
       class="fixed bottom-28 right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-primary-container text-on-primary-container shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
       aria-label="Agregar producto"
     >
-      <span class="material-symbols-outlined text-[28px]">add</span>
+      <span class="material-symbols-outlined text-[19px]">add</span>
     </RouterLink>
   </div>
 
@@ -211,17 +211,17 @@ const filteredProducts = computed(() => {
           <!-- Icon -->
           <div class="flex justify-center mb-5">
             <div class="flex items-center justify-center w-16 h-16 rounded-full bg-error/10">
-              <span class="material-symbols-outlined text-error text-[32px]">delete</span>
+              <span class="material-symbols-outlined text-error text-[26px]">delete</span>
             </div>
           </div>
 
           <!-- Title -->
-          <h2 class="text-center text-[22px] font-bold font-display text-on-surface mb-3">
+          <h2 class="text-center text-[19px] font-bold font-display text-on-surface mb-3">
             Eliminar producto
           </h2>
 
           <!-- Message -->
-          <p class="text-center text-[16px] text-on-surface-variant font-sans mb-8">
+          <p class="text-center text-[14px] text-on-surface-variant font-sans mb-8">
             ¿Estás seguro de que deseas eliminar
             <strong class="text-on-surface">{{ productToDelete?.name }}</strong
             >? Esta acción no se puede deshacer.
@@ -230,13 +230,13 @@ const filteredProducts = computed(() => {
           <!-- Actions -->
           <div class="flex flex-col gap-3">
             <button
-              class="w-full py-4 bg-error text-on-error rounded-full text-[18px] font-bold font-display transition-all duration-200 hover:shadow-lg active:scale-95"
+              class="w-full py-4 bg-error text-on-error rounded-full text-[15px] font-bold font-display transition-all duration-200 hover:shadow-lg active:scale-95"
               @click="confirmDelete"
             >
               Eliminar
             </button>
             <button
-              class="w-full py-4 border border-outline-variant text-on-surface-variant rounded-full text-[18px] font-semibold font-display transition-all duration-200 hover:bg-surface-variant active:scale-95"
+              class="w-full py-4 border border-outline-variant text-on-surface-variant rounded-full text-[15px] font-semibold font-display transition-all duration-200 hover:bg-surface-variant active:scale-95"
               @click="cancelDelete"
             >
               Cancelar

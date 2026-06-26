@@ -38,12 +38,12 @@ function addToCart() {
           <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
         </RouterLink>
         <h1
-          class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+          class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
         >
           Venta Rápida
         </h1>
       </div>
-      <p class="mt-2 text-[20px] leading-[32px] text-on-surface-variant font-sans">
+      <p class="mt-2 text-[17px] leading-[32px] text-on-surface-variant font-sans">
         Registra un producto o servicio personalizado a tu venta actual.
       </p>
     </section>
@@ -56,7 +56,7 @@ function addToCart() {
         <!-- Product Name -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Nombre del Producto
           </label>
@@ -64,20 +64,20 @@ function addToCart() {
             v-model="productName"
             type="text"
             placeholder="e.g. Servicio Especial"
-            class="w-full bg-surface-container-low border border-outline-variant rounded-full px-6 py-4 text-[20px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+            class="w-full bg-surface-container-low border border-outline-variant rounded-full px-6 py-4 text-[17px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
           />
         </div>
 
         <!-- Price -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Precio (MXN)
           </label>
           <div class="relative">
             <span
-              class="absolute left-6 top-1/2 -translate-y-1/2 text-[40px] text-primary-fixed-dim font-bold"
+              class="absolute left-6 top-1/2 -translate-y-1/2 text-[32px] text-primary-fixed-dim font-bold"
             >
               $
             </span>
@@ -87,7 +87,7 @@ function addToCart() {
               step="0.01"
               min="0"
               placeholder="0.00"
-              class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-6 text-[40px] text-primary-fixed-dim font-bold placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+              class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-6 text-[32px] text-primary-fixed-dim font-bold placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ function addToCart() {
         <!-- Category Chips -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Categoría
           </label>
@@ -120,10 +120,10 @@ function addToCart() {
         <!-- Submit Button -->
         <button
           type="submit"
-          class="w-full py-5 bg-primary-container text-on-primary-container text-[28px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
+          class="w-full py-5 bg-primary-container text-on-primary-container text-[19px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
         >
           <span
-            class="material-symbols-outlined text-[28px]"
+            class="material-symbols-outlined text-[19px]"
             style="font-variation-settings: 'FILL' 1"
           >
             shopping_cart
@@ -135,7 +135,7 @@ function addToCart() {
 
     <!-- Info Note -->
     <div class="mt-8 border-l-4 border-primary-fixed-dim/40 pl-6 py-2">
-      <p class="text-[18px] text-on-surface-variant font-sans">
+      <p class="text-[15px] text-on-surface-variant font-sans">
         Los productos agregados aquí se suman a tu carrito actual. Puedes finalizar la venta desde
         la pestaña de Carrito.
       </p>

@@ -67,11 +67,11 @@ function toggleView() {
     <!-- Header -->
     <section class="mb-4">
       <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         Productos
       </h1>
-      <p class="mt-1 text-[16px] text-on-surface-variant font-sans">
+      <p class="mt-1 text-[14px] text-on-surface-variant font-sans">
         Toca un producto para agregarlo al carrito
       </p>
     </section>
@@ -89,7 +89,7 @@ function toggleView() {
           v-model="searchQuery"
           type="text"
           placeholder="Buscar producto..."
-          class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-12 py-3.5 text-[16px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+          class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-12 py-3.5 text-[14px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
         />
         <!-- Clear button -->
         <button
@@ -98,7 +98,7 @@ function toggleView() {
           aria-label="Borrar búsqueda"
           @click="clearSearch"
         >
-          <span class="material-symbols-outlined text-on-surface-variant text-[20px]">close</span>
+          <span class="material-symbols-outlined text-on-surface-variant text-[17px]">close</span>
         </button>
       </div>
 
@@ -116,7 +116,7 @@ function toggleView() {
 
     <!-- Loading -->
     <div v-if="productsStore.isLoading" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
@@ -148,10 +148,10 @@ function toggleView() {
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
-          <h3 class="text-[16px] font-bold font-display text-on-surface truncate">
+          <h3 class="text-[14px] font-bold font-display text-on-surface truncate">
             {{ product.name }}
           </h3>
-          <p class="mt-0.5 text-[18px] font-bold text-surface-tint">
+          <p class="mt-0.5 text-[15px] font-bold text-surface-tint">
             ${{ formatPrice(product.price) }}
           </p>
         </div>
@@ -160,7 +160,7 @@ function toggleView() {
         <div
           class="shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-surface-container-high"
         >
-          <span class="material-symbols-outlined text-on-surface text-[22px]"
+          <span class="material-symbols-outlined text-on-surface text-[19px]"
             >add_shopping_cart</span
           >
         </div>
@@ -203,7 +203,7 @@ function toggleView() {
         </h3>
 
         <!-- Price -->
-        <p class="text-[16px] font-bold text-surface-tint">${{ formatPrice(product.price) }}</p>
+        <p class="text-[14px] font-bold text-surface-tint">${{ formatPrice(product.price) }}</p>
       </article>
     </div>
 
@@ -212,13 +212,13 @@ function toggleView() {
       v-else-if="productsStore.activeProducts.length === 0 && !searchQuery.trim()"
       class="flex flex-col items-center justify-center py-16 gap-4"
     >
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50"
         >storefront</span
       >
-      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+      <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
         No hay productos en tu inventario
       </p>
-      <p class="text-[16px] text-on-surface-variant/60 text-center">
+      <p class="text-[14px] text-on-surface-variant/60 text-center">
         Agrega productos desde Ajustes → Inventario
       </p>
       <RouterLink
@@ -234,10 +234,10 @@ function toggleView() {
       v-else-if="filteredProducts.length === 0 && searchQuery.trim()"
       class="flex flex-col items-center justify-center py-16 gap-4"
     >
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50"
         >search_off</span
       >
-      <p class="text-[18px] text-on-surface-variant font-sans text-center">
+      <p class="text-[15px] text-on-surface-variant font-sans text-center">
         No se encontraron productos con "{{ searchQuery }}"
       </p>
     </div>
@@ -248,7 +248,7 @@ function toggleView() {
       class="fixed bottom-28 right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-primary-container text-on-primary-container shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
       aria-label="Venta Rápida"
     >
-      <span class="material-symbols-outlined text-[28px]">add</span>
+      <span class="material-symbols-outlined text-[19px]">add</span>
     </RouterLink>
   </div>
 </template>

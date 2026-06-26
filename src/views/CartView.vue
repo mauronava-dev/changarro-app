@@ -56,7 +56,7 @@ async function finalizeSale() {
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6">
       <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         Carrito
       </h1>
@@ -92,10 +92,10 @@ async function finalizeSale() {
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
-          <h3 class="text-[16px] font-bold font-display text-on-surface truncate">
+          <h3 class="text-[14px] font-bold font-display text-on-surface truncate">
             {{ item.productName }}
           </h3>
-          <p class="mt-1 text-[20px] font-bold text-surface-tint">
+          <p class="mt-1 text-[17px] font-bold text-surface-tint">
             ${{ formatPrice(item.unitPrice) }}
           </p>
         </div>
@@ -107,9 +107,9 @@ async function finalizeSale() {
             aria-label="Disminuir cantidad"
             @click="cartStore.decrementQuantity(item.id)"
           >
-            <span class="material-symbols-outlined text-[18px]">remove</span>
+            <span class="material-symbols-outlined text-[15px]">remove</span>
           </button>
-          <span class="w-8 text-center text-[18px] font-bold text-on-surface">
+          <span class="w-8 text-center text-[15px] font-bold text-on-surface">
             {{ item.quantity }}
           </span>
           <button
@@ -117,7 +117,7 @@ async function finalizeSale() {
             aria-label="Aumentar cantidad"
             @click="cartStore.incrementQuantity(item.id)"
           >
-            <span class="material-symbols-outlined text-[18px]">add</span>
+            <span class="material-symbols-outlined text-[15px]">add</span>
           </button>
         </div>
 
@@ -134,13 +134,13 @@ async function finalizeSale() {
 
     <!-- Empty state -->
     <div v-else class="flex flex-col items-center justify-center py-16 gap-4">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50"
         >shopping_cart</span
       >
-      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+      <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
         Tu carrito está vacío
       </p>
-      <p class="text-[16px] text-on-surface-variant/60 text-center">
+      <p class="text-[14px] text-on-surface-variant/60 text-center">
         Agrega productos desde la pantalla de inicio
       </p>
     </div>
@@ -157,7 +157,7 @@ async function finalizeSale() {
         >
           Subtotal
         </span>
-        <span class="text-[18px] font-bold text-on-surface">
+        <span class="text-[15px] font-bold text-on-surface">
           ${{ formatPrice(cartStore.subtotal) }}
         </span>
       </div>
@@ -169,7 +169,7 @@ async function finalizeSale() {
         >
           Impuestos ({{ Math.round(cartStore.taxRate * 100) }}%)
         </span>
-        <span class="text-[18px] font-bold text-on-surface">
+        <span class="text-[15px] font-bold text-on-surface">
           ${{ formatPrice(cartStore.tax) }}
         </span>
       </div>
@@ -184,18 +184,18 @@ async function finalizeSale() {
         >
           Total
         </span>
-        <span class="text-[28px] font-semibold text-surface-tint">
+        <span class="text-[19px] font-semibold text-surface-tint">
           ${{ formatPrice(cartStore.total) }}
         </span>
       </div>
 
       <!-- Checkout Button -->
       <button
-        class="w-full py-6 bg-surface-tint text-on-primary rounded-full text-[28px] font-bold flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
+        class="w-full py-6 bg-surface-tint text-on-primary rounded-full text-[19px] font-bold flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
         @click="finalizeSale"
       >
         <span
-          class="material-symbols-outlined text-[28px]"
+          class="material-symbols-outlined text-[19px]"
           style="font-variation-settings: 'FILL' 1"
         >
           payments
@@ -222,19 +222,19 @@ async function finalizeSale() {
           <!-- Icon -->
           <div class="flex justify-center mb-5">
             <div class="flex items-center justify-center w-16 h-16 rounded-full bg-error/10">
-              <span class="material-symbols-outlined text-error text-[32px]"
+              <span class="material-symbols-outlined text-error text-[26px]"
                 >remove_shopping_cart</span
               >
             </div>
           </div>
 
           <!-- Title -->
-          <h2 class="text-center text-[22px] font-bold font-display text-on-surface mb-3">
+          <h2 class="text-center text-[19px] font-bold font-display text-on-surface mb-3">
             Eliminar del carrito
           </h2>
 
           <!-- Message -->
-          <p class="text-center text-[16px] text-on-surface-variant font-sans mb-8">
+          <p class="text-center text-[14px] text-on-surface-variant font-sans mb-8">
             ¿Deseas eliminar
             <strong class="text-on-surface">{{ itemToDelete?.productName }}</strong>
             del carrito?
@@ -243,13 +243,13 @@ async function finalizeSale() {
           <!-- Actions -->
           <div class="flex flex-col gap-3">
             <button
-              class="w-full py-4 bg-error text-on-error rounded-full text-[18px] font-bold font-display transition-all duration-200 hover:shadow-lg active:scale-95"
+              class="w-full py-4 bg-error text-on-error rounded-full text-[15px] font-bold font-display transition-all duration-200 hover:shadow-lg active:scale-95"
               @click="confirmDelete"
             >
               Eliminar
             </button>
             <button
-              class="w-full py-4 border border-outline-variant text-on-surface-variant rounded-full text-[18px] font-semibold font-display transition-all duration-200 hover:bg-surface-variant active:scale-95"
+              class="w-full py-4 border border-outline-variant text-on-surface-variant rounded-full text-[15px] font-semibold font-display transition-all duration-200 hover:bg-surface-variant active:scale-95"
               @click="cancelDelete"
             >
               Cancelar

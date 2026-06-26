@@ -35,14 +35,14 @@ function formatTime(iso: string): string {
   <div class="max-w-2xl mx-auto">
     <!-- Header -->
     <h1
-      class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background mb-6"
+      class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background mb-6"
     >
       Ventas
     </h1>
 
     <!-- Loading -->
     <div v-if="salesStore.isLoading" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
@@ -66,7 +66,7 @@ function formatTime(iso: string): string {
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
-          <p class="text-[16px] font-bold font-display text-on-surface">
+          <p class="text-[14px] font-bold font-display text-on-surface">
             {{ sale.items.length }} producto{{ sale.items.length > 1 ? 's' : '' }}
           </p>
           <p class="mt-0.5 text-[14px] text-on-surface-variant font-sans">
@@ -76,7 +76,7 @@ function formatTime(iso: string): string {
 
         <!-- Total -->
         <div class="shrink-0 text-right">
-          <p class="text-[20px] font-bold text-surface-tint">${{ formatPrice(sale.total) }}</p>
+          <p class="text-[17px] font-bold text-surface-tint">${{ formatPrice(sale.total) }}</p>
           <p v-if="sale.taxIncluded" class="text-[12px] text-on-surface-variant/60">IVA incluido</p>
         </div>
 
@@ -87,13 +87,13 @@ function formatTime(iso: string): string {
 
     <!-- Empty State -->
     <div v-else class="flex flex-col items-center justify-center py-24">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 mb-4">
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 mb-4">
         receipt_long
       </span>
-      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+      <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
         No se han realizado ventas aún
       </p>
-      <p class="mt-2 text-[16px] text-on-surface-variant/60 text-center font-sans">
+      <p class="mt-2 text-[14px] text-on-surface-variant/60 text-center font-sans">
         Las ventas finalizadas aparecerán aquí
       </p>
     </div>

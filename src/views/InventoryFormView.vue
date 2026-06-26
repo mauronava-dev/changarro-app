@@ -146,7 +146,7 @@ async function save() {
         <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
       </RouterLink>
       <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         {{ pageTitle }}
       </h1>
@@ -154,7 +154,7 @@ async function save() {
 
     <!-- Loading state for edit mode -->
     <div v-if="isLoadingProduct" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
@@ -168,7 +168,7 @@ async function save() {
         <!-- Image Upload -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Foto del producto
           </label>
@@ -185,7 +185,7 @@ async function save() {
                 alt="Vista previa"
                 class="w-full h-full object-cover"
               />
-              <span v-else class="material-symbols-outlined text-[32px] text-on-surface-variant/40">
+              <span v-else class="material-symbols-outlined text-[26px] text-on-surface-variant/40">
                 add_a_photo
               </span>
             </div>
@@ -223,7 +223,7 @@ async function save() {
         <!-- Product Name -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Nombre del Producto
           </label>
@@ -231,20 +231,20 @@ async function save() {
             v-model="name"
             type="text"
             placeholder="e.g. Playera Negra"
-            class="w-full bg-surface-container-low border border-outline-variant rounded-full px-6 py-4 text-[20px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+            class="w-full bg-surface-container-low border border-outline-variant rounded-full px-6 py-4 text-[17px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
           />
         </div>
 
         <!-- Price -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Precio de venta (MXN)
           </label>
           <div class="relative">
             <span
-              class="absolute left-6 top-1/2 -translate-y-1/2 text-[40px] text-primary-fixed-dim font-bold"
+              class="absolute left-6 top-1/2 -translate-y-1/2 text-[32px] text-primary-fixed-dim font-bold"
             >
               $
             </span>
@@ -254,7 +254,7 @@ async function save() {
               step="0.01"
               min="0"
               placeholder="0.00"
-              class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-6 text-[40px] text-primary-fixed-dim font-bold placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+              class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-6 py-6 text-[32px] text-primary-fixed-dim font-bold placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
             />
           </div>
         </div>
@@ -262,7 +262,7 @@ async function save() {
         <!-- Category Chips -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Categoría
           </label>
@@ -287,7 +287,7 @@ async function save() {
         <!-- Unit selector -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
           >
             Unidad de medida
           </label>
@@ -314,14 +314,14 @@ async function save() {
           type="submit"
           :disabled="!isFormValid"
           :class="[
-            'w-full py-5 text-[28px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-3 transition-all duration-200 active:scale-95',
+            'w-full py-5 text-[19px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-3 transition-all duration-200 active:scale-95',
             isFormValid
               ? 'bg-primary-container text-on-primary-container hover:shadow-xl'
               : 'bg-surface-container-highest text-on-surface-variant/50 cursor-not-allowed shadow-none',
           ]"
         >
           <span
-            class="material-symbols-outlined text-[28px]"
+            class="material-symbols-outlined text-[19px]"
             style="font-variation-settings: 'FILL' 1"
           >
             {{ isEditing ? 'save' : 'add_circle' }}

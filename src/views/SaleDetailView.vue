@@ -58,7 +58,7 @@ function formatTime(iso: string): string {
         <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
       </RouterLink>
       <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        class="text-[26px] leading-[34px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         Detalle de Venta
       </h1>
@@ -66,14 +66,14 @@ function formatTime(iso: string): string {
 
     <!-- Loading -->
     <div v-if="isLoading" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
 
     <div v-else-if="sale">
       <!-- Date/time -->
-      <p class="text-[16px] text-on-surface-variant font-sans mb-6 capitalize">
+      <p class="text-[14px] text-on-surface-variant font-sans mb-6 capitalize">
         {{ formatDate(sale.createdAt) }} — {{ formatTime(sale.createdAt) }}
       </p>
 
@@ -92,12 +92,12 @@ function formatTime(iso: string): string {
           </span>
 
           <!-- Name -->
-          <span class="flex-1 text-[16px] text-on-surface font-sans truncate">
+          <span class="flex-1 text-[14px] text-on-surface font-sans truncate">
             {{ item.productName }}
           </span>
 
           <!-- Subtotal -->
-          <span class="shrink-0 text-[16px] font-bold text-surface-tint">
+          <span class="shrink-0 text-[14px] font-bold text-surface-tint">
             ${{ formatPrice(item.subtotal) }}
           </span>
         </article>
@@ -112,7 +112,7 @@ function formatTime(iso: string): string {
           >
             Subtotal
           </span>
-          <span class="text-[18px] font-bold text-on-surface">
+          <span class="text-[15px] font-bold text-on-surface">
             ${{ formatPrice(sale.subtotal) }}
           </span>
         </div>
@@ -124,7 +124,7 @@ function formatTime(iso: string): string {
           >
             IVA ({{ Math.round(sale.taxRate * 100) }}%)
           </span>
-          <span class="text-[18px] font-bold text-on-surface">
+          <span class="text-[15px] font-bold text-on-surface">
             ${{ formatPrice(sale.taxAmount) }}
           </span>
         </div>
@@ -139,7 +139,7 @@ function formatTime(iso: string): string {
           >
             Total
           </span>
-          <span class="text-[28px] font-bold text-surface-tint">
+          <span class="text-[19px] font-bold text-surface-tint">
             ${{ formatPrice(sale.total) }}
           </span>
         </div>
