@@ -50,8 +50,9 @@ export const useProductsStore = defineStore('products', () => {
     const updatedAt = new Date().toISOString()
     await db.products.update(id, { ...data, updatedAt })
     const index = products.value.findIndex((p) => p.id === id)
-    if (index !== -1) {
-      products.value[index] = Object.assign(products.value[index], data, { updatedAt })
+    const existing = products.value[index]
+    if (index !== -1 && existing) {
+      products.value[index] = { ...existing, ...data, updatedAt }
     }
   }
 
