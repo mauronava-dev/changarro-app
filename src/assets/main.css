@@ -1,0 +1,146 @@
+@import 'tailwindcss';
+
+/* Dark mode strategy: class-based toggle */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Paleta principal - Sage Green */
+  --color-primary: oklch(0.45 0.06 155);
+  --color-primary-hover: oklch(0.4 0.07 155);
+  --color-primary-light: oklch(0.9 0.03 155);
+
+  /* Superficies */
+  --color-surface: oklch(0.98 0.005 155);
+  --color-surface-elevated: oklch(0.96 0.005 155);
+  --color-surface-dark: oklch(0.12 0.01 155);
+  --color-surface-dark-elevated: oklch(0.16 0.01 155);
+
+  /* Texto */
+  --color-text-primary: oklch(0.2 0.02 155);
+  --color-text-secondary: oklch(0.45 0.02 155);
+  --color-text-primary-dark: oklch(0.95 0.005 155);
+  --color-text-secondary-dark: oklch(0.7 0.01 155);
+
+  /* Tipografía */
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+
+  /* Bordes y radios */
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* Sombras */
+  --shadow-glass: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow-glass-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-hard: 0 4px 0 rgba(0, 0, 0, 0.8);
+
+  /* Blur */
+  --blur-glass-sm: 8px;
+  --blur-glass-md: 16px;
+  --blur-glass-lg: 24px;
+
+  /* Animaciones */
+  --animate-fade-in: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glass design tokens */
+:root {
+  --bc-glass-bg-light: rgba(255, 255, 255, 0.4);
+  --bc-glass-border-light: rgba(255, 255, 255, 0.6);
+  --bc-glass-bg-dark: rgba(15, 15, 15, 0.5);
+  --bc-glass-border-dark: rgba(255, 255, 255, 0.1);
+  --bc-glass-input-bg: rgba(0, 0, 0, 0.05);
+  --bc-glass-shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --bc-glass-shadow-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.15);
+  --bc-glass-highlight: inset 1px 1px 0px rgba(255, 255, 255, 0.2);
+  --bc-glass-blur-sm: blur(8px);
+  --bc-glass-blur-md: blur(16px);
+  --bc-glass-blur-lg: blur(24px);
+}
+
+/* Glass utilities */
+@utility glass-panel {
+  background: var(--bc-glass-bg-light);
+  backdrop-filter: blur(var(--blur-glass-lg));
+  -webkit-backdrop-filter: blur(var(--blur-glass-lg));
+  border: 1px solid var(--bc-glass-border-light);
+  box-shadow: var(--bc-glass-highlight), var(--bc-glass-shadow-soft);
+
+  @variant dark {
+    background: var(--bc-glass-bg-dark);
+    border-color: var(--bc-glass-border-dark);
+    box-shadow: var(--bc-glass-highlight);
+  }
+}
+
+@utility glass-input {
+  background: var(--bc-glass-input-bg);
+  box-shadow: var(--bc-glass-shadow-inner);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+@utility text-on-glass {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Base styles */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Vue transition classes */
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+.fade-up-enter-from,
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
