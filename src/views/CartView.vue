@@ -1,10 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { useProductImages } from '@/composables/useProductImages'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const { imageUrls, loadImages } = useProductImages()
+
+// Load images for cart items
+watch(
+  () => cartStore.items,
+  (items) => {
+    const productIds = items.map((i) => i.productId).filter((id) => !id.startsWith('custom-'))
+    if (productIds.length > 0) {
+      loadImages(productIds)
+    }
+  },
+  { immediate: true },
+)
 
 // Delete confirmation modal
 const showDeleteModal = ref(false)
@@ -63,9 +77,15 @@ async function finalizeSale() {
       >
         <!-- Thumbnail -->
         <div
-          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center"
+          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center overflow-hidden"
         >
-          <span class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
+          <img
+            v-if="imageUrls[item.productId]"
+            :src="imageUrls[item.productId]"
+            :alt="item.productName"
+            class="w-full h-full object-cover"
+          />
+          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
             >shopping_bag</span
           >
         </div>

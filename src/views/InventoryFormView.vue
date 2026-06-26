@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
+import { resizeImage, saveProductImage } from '@/composables/useProductImages'
+import { db } from '@/services/db'
 
 const route = useRoute()
 const router = useRouter()
@@ -16,6 +18,12 @@ const price = ref('')
 const selectedCategory = ref('PRODUCTO')
 const selectedUnit = ref('pieza')
 const isLoadingProduct = ref(false)
+
+// Image state
+const imagePreviewUrl = ref<string | null>(null)
+const imageBlob = ref<Blob | null>(null)
+const imageRemoved = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const categories = ['SERVICIO', 'PRODUCTO', 'OTRO']
 const units = ['pieza', 'kg', 'litro', 'paquete', 'servicio']
@@ -36,8 +44,14 @@ onMounted(async () => {
         price.value = product.price.toString()
         selectedCategory.value = product.category
         selectedUnit.value = product.unit
+
+        // Load existing image
+        const img = await db.productImages.get(productId.value)
+        if (img) {
+          imagePreviewUrl.value = URL.createObjectURL(img.blob)
+          imageBlob.value = img.blob
+        }
       } else {
-        // Product not found, go back
         router.replace({ name: 'inventory' })
       }
     } finally {
@@ -45,6 +59,48 @@ onMounted(async () => {
     }
   }
 })
+
+onBeforeUnmount(() => {
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value)
+  }
+})
+
+function triggerFileInput() {
+  fileInput.value?.click()
+}
+
+async function handleFileSelect(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  try {
+    const resized = await resizeImage(file, 400)
+    imageBlob.value = resized
+    imageRemoved.value = false
+
+    // Revoke old preview
+    if (imagePreviewUrl.value) {
+      URL.revokeObjectURL(imagePreviewUrl.value)
+    }
+    imagePreviewUrl.value = URL.createObjectURL(resized)
+  } catch (e) {
+    console.error('Error processing image:', e)
+  }
+
+  // Reset input so same file can be selected again
+  input.value = ''
+}
+
+function removeImage() {
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value)
+  }
+  imagePreviewUrl.value = null
+  imageBlob.value = null
+  imageRemoved.value = true
+}
 
 async function save() {
   if (!isFormValid.value) return
@@ -56,10 +112,22 @@ async function save() {
     unit: selectedUnit.value,
   }
 
+  let id: string
+
   if (isEditing.value && productId.value) {
     await store.updateProduct(productId.value, data)
+    id = productId.value
   } else {
-    await store.createProduct(data)
+    const product = await store.createProduct(data)
+    id = product.id
+  }
+
+  // Save or delete image
+  if (imageBlob.value && !imageRemoved.value) {
+    await saveProductImage(id, imageBlob.value)
+  } else if (imageRemoved.value) {
+    const { deleteProductImage } = await import('@/composables/useProductImages')
+    await deleteProductImage(id)
   }
 
   router.push({ name: 'inventory' })
@@ -94,13 +162,68 @@ async function save() {
     <!-- Form Card -->
     <div
       v-else
-      class="bg-surface-container border border-white/5 rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-8 md:p-[48px]"
+      class="bg-surface-container border border-white/5 rounded-[2rem] shadow-soft p-8 md:p-[48px]"
     >
       <form @submit.prevent="save" class="flex flex-col gap-8">
+        <!-- Image Upload -->
+        <div class="flex flex-col gap-3">
+          <label
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
+          >
+            Foto del producto
+          </label>
+
+          <div class="flex items-center gap-4">
+            <!-- Preview or placeholder -->
+            <div
+              class="relative shrink-0 w-24 h-24 rounded-[1rem] border border-outline-variant overflow-hidden bg-surface-container-high flex items-center justify-center cursor-pointer transition-all hover:border-surface-tint"
+              @click="triggerFileInput"
+            >
+              <img
+                v-if="imagePreviewUrl"
+                :src="imagePreviewUrl"
+                alt="Vista previa"
+                class="w-full h-full object-cover"
+              />
+              <span v-else class="material-symbols-outlined text-[32px] text-on-surface-variant/40">
+                add_a_photo
+              </span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col gap-2">
+              <button
+                type="button"
+                class="px-5 py-2 rounded-full border border-outline-variant text-on-surface-variant text-label-md transition-all hover:bg-surface-variant active:scale-95"
+                @click="triggerFileInput"
+              >
+                {{ imagePreviewUrl ? 'Cambiar foto' : 'Seleccionar foto' }}
+              </button>
+              <button
+                v-if="imagePreviewUrl"
+                type="button"
+                class="px-5 py-2 rounded-full text-error text-label-md transition-all hover:bg-error/10 active:scale-95"
+                @click="removeImage"
+              >
+                Eliminar foto
+              </button>
+            </div>
+          </div>
+
+          <!-- Hidden file input -->
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            @change="handleFileSelect"
+          />
+        </div>
+
         <!-- Product Name -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Nombre del Producto
           </label>
@@ -115,7 +238,7 @@ async function save() {
         <!-- Price -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Precio de venta (MXN)
           </label>
@@ -139,7 +262,7 @@ async function save() {
         <!-- Category Chips -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Categoría
           </label>
@@ -164,7 +287,7 @@ async function save() {
         <!-- Unit selector -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Unidad de medida
           </label>

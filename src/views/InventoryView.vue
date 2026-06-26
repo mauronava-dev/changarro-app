@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
+import { useProductImages } from '@/composables/useProductImages'
 
 const store = useProductsStore()
+const { imageUrls, loadImages } = useProductImages()
 const searchQuery = ref('')
 
 // Delete confirmation modal
@@ -13,6 +15,17 @@ const productToDelete = ref<{ id: string; name: string } | null>(null)
 onMounted(() => {
   store.loadProducts()
 })
+
+// Load images when products change
+watch(
+  () => store.products,
+  (products) => {
+    if (products.length > 0) {
+      loadImages(products.map((p) => p.id))
+    }
+  },
+  { immediate: true },
+)
 
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -96,9 +109,15 @@ const filteredProducts = computed(() => {
       >
         <!-- Thumbnail -->
         <div
-          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center"
+          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center overflow-hidden"
         >
-          <span class="material-symbols-outlined text-on-surface-variant/50 text-[28px]"
+          <img
+            v-if="imageUrls[product.id]"
+            :src="imageUrls[product.id]"
+            :alt="product.name"
+            class="w-full h-full object-cover"
+          />
+          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[28px]"
             >inventory_2</span
           >
         </div>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
+import { useProductImages } from '@/composables/useProductImages'
 
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
+const { imageUrls, loadImages } = useProductImages()
 
 const searchQuery = ref('')
 const viewMode = ref<'list' | 'grid'>('list')
@@ -13,6 +15,17 @@ const viewMode = ref<'list' | 'grid'>('list')
 onMounted(() => {
   productsStore.loadProducts()
 })
+
+// Load images when products change
+watch(
+  () => productsStore.activeProducts,
+  (products) => {
+    if (products.length > 0) {
+      loadImages(products.map((p) => p.id))
+    }
+  },
+  { immediate: true },
+)
 
 /**
  * Normalize a string for accent/diacritic-insensitive search.
@@ -120,9 +133,15 @@ function toggleView() {
       >
         <!-- Thumbnail -->
         <div
-          class="shrink-0 w-14 h-14 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center"
+          class="shrink-0 w-14 h-14 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center overflow-hidden"
         >
-          <span class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
+          <img
+            v-if="imageUrls[product.id]"
+            :src="imageUrls[product.id]"
+            :alt="product.name"
+            class="w-full h-full object-cover"
+          />
+          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
             >inventory_2</span
           >
         </div>
@@ -163,9 +182,15 @@ function toggleView() {
       >
         <!-- Thumbnail -->
         <div
-          class="w-14 h-14 mb-3 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center"
+          class="w-14 h-14 mb-3 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center overflow-hidden"
         >
-          <span class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
+          <img
+            v-if="imageUrls[product.id]"
+            :src="imageUrls[product.id]"
+            :alt="product.name"
+            class="w-full h-full object-cover"
+          />
+          <span v-else class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
             >inventory_2</span
           >
         </div>
