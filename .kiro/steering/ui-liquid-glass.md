@@ -1,216 +1,254 @@
-# UI/UX - Liquid Glass Design System (Bendito Código)
+# UI/UX - Serene Hearth Design System (Bendito Código)
 
-Este steering define los lineamientos visuales para Changarro siguiendo el playbook
-de Bendito Código: fusión de Glassmorphism con Liquid Glass.
-La plataforma soporta tema oscuro y claro.
+Este steering define los lineamientos visuales para Changarro siguiendo el
+design system "Serene Hearth": una fusión de Soft Minimalism con Tactile Glassmorphism.
+La filosofía es "Cozy Tech" — interfaces que se sienten cálidas, calmadas y táctiles.
 
 ---
 
 ## Principio fundamental
 
-Crear interfaces que se sientan como objetos físicos digitales, utilizando profundidad,
-luz y movimiento para guiar al usuario sin perder limpieza estructural.
+Crear interfaces que se sientan acogedoras y confiables, diseñadas para alta
+legibilidad y facilidad de uso. Formas orgánicas pill-shaped, tonos cálidos
+profundos, y una calidad material (textura de grano sutil) que reduce la fatiga
+visual y hace la UI más tangible.
 
 ---
 
-## Las 4 propiedades de un componente Liquid Glass
+## Paleta de colores (Material Design 3 - Dark)
 
-Todo componente con efecto glass DEBE combinar estas 4 propiedades:
+El diseño base es dark mode. La paleta usa un "Deep Hearth" theme con
+gris cálido oscuro como base y lavender como acento primario.
 
-1. **Translucidez (Superficie)**: Color base con baja opacidad
-2. **Refracción (Backdrop Blur)**: Desenfoque del contenido detrás del elemento
-3. **Luz Especular (Bordes)**: Borde interior semi-transparente que simula luz golpeando el cristal
-4. **Sombra Dinámica (Profundidad)**: Box-shadow suave y coloreada
+### Tokens principales
 
-Si falta alguna, el efecto se rompe. No es solo "bajar la opacidad".
+| Token                       | Valor   | Uso                              |
+| --------------------------- | ------- | -------------------------------- |
+| `surface`                   | #131313 | Fondo base de la app             |
+| `surface-container-lowest`  | #0e0e0e | Bottom nav                       |
+| `surface-container-low`     | #1c1b1b | Inputs                           |
+| `surface-container`         | #20201f | Cards, paneles                   |
+| `surface-container-high`    | #2a2a2a | Elementos elevados               |
+| `surface-container-highest` | #353535 | Controles (botones +/-)          |
+| `on-surface`                | #e5e2e1 | Texto principal                  |
+| `on-surface-variant`        | #c7c5cc | Texto secundario, labels         |
+| `primary`                   | #ffffff | Texto de marca                   |
+| `primary-container`         | #e1e1f5 | Botones primarios, chips activos |
+| `on-primary-container`      | #626374 | Texto en botones primarios       |
+| `primary-fixed-dim`         | #c5c5d8 | Precios, acentos, nombre marca   |
+| `surface-tint`              | #c5c5d8 | Botón "Finalizar Venta", hovers  |
+| `outline-variant`           | #46464c | Bordes de cards, separadores     |
+| `error`                     | #ffb4ab | Botón eliminar, estados de error |
 
----
+### Regla de color
 
-## Jerarquía de capas (Eje Z)
-
-| Nivel | Uso | Blur | Notas |
-|-------|-----|------|-------|
-| 0 - Fondo | Canvas base | N/A | Gradientes fluidos, animaciones |
-| 1 - Superficies Base | Sidebar, paneles grandes | 24px | Opacidad baja |
-| 2 - Componentes Flotantes | Modales, tooltips, nav secundaria | 12px | Bordes especulares más definidos |
-| 3 - Elementos de Acción | Botones, inputs | N/A | SÓLIDOS, nunca glass sobre glass |
-
-### REGLA DE ORO
-Nunca apilar más de 2 capas con `backdrop-filter` simultáneamente.
-
----
-
-## Design Tokens (Variables CSS)
-
-Los desarrolladores NO deben codificar opacidades a mano. Usar exclusivamente tokens `--bc-*`.
-
-### Tokens de Superficie
-
-```css
-:root {
-  /* Tema Claro (Cristal Esmerilado) */
-  --bc-glass-bg-light: rgba(255, 255, 255, 0.4);
-  --bc-glass-border-light: rgba(255, 255, 255, 0.6);
-
-  /* Tema Oscuro (Cristal Ahumado) */
-  --bc-glass-bg-dark: rgba(15, 15, 15, 0.5);
-  --bc-glass-border-dark: rgba(255, 255, 255, 0.1);
-
-  /* Inputs hundidos */
-  --bc-glass-input-bg: rgba(0, 0, 0, 0.05);
-}
-```
-
-### Tokens de Refracción (Blur)
-
-```css
-:root {
-  --bc-glass-blur-sm: blur(8px);   /* Modales móviles, tooltips */
-  --bc-glass-blur-md: blur(16px);  /* Elementos flotantes secundarios */
-  --bc-glass-blur-lg: blur(24px);  /* Superficies base, sidebars */
-}
-```
-
-### Tokens de Luz Especular y Sombra
-
-```css
-:root {
-  /* Profundidad Tema Claro */
-  --bc-glass-shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.08);
-
-  /* Profundidad Tema Oscuro / Inputs */
-  --bc-glass-shadow-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.15);
-
-  /* Highlight direccional (luz superior-izquierda) */
-  --bc-glass-highlight: inset 1px 1px 0px rgba(255, 255, 255, 0.2);
-}
-```
-
----
-
-## Gestión de Temas
-
-### Light Mode (Cristal Esmerilado)
-- El fondo NUNCA es blanco puro — usar tonos ultra-claros con gradientes sutiles
-- Profundidad con sombras de caída amplias (frías o cálidas)
-- Texto: gris oscuro absorbente, nunca negro absoluto (#000)
-
-### Dark Mode (Cristal Ahumado)
-- Las sombras de caída no funcionan sobre negro
-- Profundidad con bordes especulares iluminados (blanco al 10-15%) y superposición de opacidades
-- Texto: blanco puro
-
-### Implementación en Tailwind/CSS
-Usar la clase `dark` en el `<html>` y alternar tokens según el tema activo.
+- El fondo NUNCA es negro puro más allá del surface base #131313
+- Los acentos son lavender pastel (no vibran contra el fondo oscuro)
+- Profundidad se comunica con variaciones tonales del gris, no con sombras duras
 
 ---
 
 ## Tipografía
 
-El fondo cristalino reduce el contraste, la tipografía debe ser robusta.
+Prioridad absoluta: **legibilidad extrema**. Tamaños 15-20% más grandes que
+estándar web. Line heights generosos para evitar "crowding" de texto.
 
-### Pairing para este proyecto (Tech/Herramientas)
-- **Titulares**: Space Grotesk (geométrica, impactante)
-- **Cuerpo/UI**: Inter (legibilidad perfecta en tamaños pequeños)
-- **Código**: Geist Mono (monoespaciada moderna para code blocks)
+### Pairing
+
+- **Headlines**: Plus Jakarta Sans (friendly, rounded, impactante)
+- **Body/Labels**: Atkinson Hyperlegible Next (legibilidad perfecta, caracteres distintos)
+- **Iconos**: Material Symbols Outlined (wght 400, FILL 0, opsz 24)
 - Importar desde Google Fonts
-- Iconos: Material Symbols Outlined (variable weight 300, FILL 0)
 
 ### Escala tipográfica
 
-| Token | Font | Size | Weight | Line Height |
-|-------|------|------|--------|-------------|
-| headline-lg | Space Grotesk | 48px | 700 | 1.1 |
-| headline-md | Space Grotesk | 32px | 600 | 1.2 |
-| headline-sm | Space Grotesk | 24px | 600 | 1.3 |
-| body-lg | Inter | 18px | 400 | 1.6 |
-| body-md | Inter | 16px | 400 | 1.5 |
-| body-sm | Inter | 14px | 400 | 1.4 |
-| label-md | Inter | 14px | 600 | 1.0 |
-| label-sm | Inter | 12px | 500 | 1.0 |
-| mono-code | Geist Mono | 14px | 400 | 22px |
+| Token              | Font                       | Size | Weight | Line Height | Letter Spacing |
+| ------------------ | -------------------------- | ---- | ------ | ----------- | -------------- |
+| headline-lg        | Plus Jakarta Sans          | 40px | 700    | 52px        | -0.02em        |
+| headline-lg-mobile | Plus Jakarta Sans          | 32px | 700    | 40px        | -0.02em        |
+| headline-md        | Plus Jakarta Sans          | 28px | 600    | 36px        | —              |
+| body-lg            | Atkinson Hyperlegible Next | 20px | 400    | 32px        | —              |
+| body-md            | Atkinson Hyperlegible Next | 18px | 400    | 28px        | —              |
+| label-md           | Plus Jakarta Sans          | 16px | 600    | 20px        | 0.05em         |
 
-### Renderizado obligatorio sobre glass
+### Labels
 
-```css
-.text-on-glass {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-}
-```
+- Labels siempre UPPERCASE con tracking extendido (letter-spacing: 0.05em)
+- Semi-bold (600) para legibilidad en tamaños pequeños
 
 ---
 
-## Catálogo de Componentes
+## Formas (Shapes)
 
-### Botones (CTAs)
-- SÓLIDOS y táctiles — nunca glass sobre glass
-- Pueden llevar sombra dura para contrastar: `box-shadow: 0 4px 0 rgba(0,0,0,0.8)`
-- Alto contraste para accesibilidad
+El lenguaje de forma se define por **redondez extrema**. No hay esquinas
+afiladas en este sistema.
 
-### Inputs y Textareas
-- Simular hundimiento (Neumorfismo invertido), no cristal que "sobresale"
-- Fondo semi-transparente oscuro con sombra interior:
-  `box-shadow: inset 0px 2px 4px rgba(0,0,0,0.15)`
-
-### Tarjetas (Cards)
-- Bordes muy redondeados o "Squircles": `border-radius: 24px`
-- Borde especular en lado superior e izquierdo (fuente de luz global)
-- Aplicar las 4 propiedades glass completas
-
-### Contenedores de tarjetas (fórmula de border-radius)
-Cuando un contenedor glass envuelve hijos con border-radius, aplicar la fórmula:
-
-**`border-radius del padre = border-radius del hijo + padding del padre`**
-
-Ejemplo: hijos con `rounded-2xl` (24px) dentro de un padre con `p-8` (32px)
-→ padre debe usar `rounded-[3.5rem]` (56px) o un valor cercano como `rounded-[2.5rem]` (40px)
-
-Esto evita que el radio del padre "corte" visualmente el radio del hijo y mantiene
-la coherencia óptica del efecto glass.
+| Elemento           | Radius        | Clase Tailwind      |
+| ------------------ | ------------- | ------------------- |
+| Botones primarios  | pill (9999px) | `rounded-full`      |
+| Chips/tags         | pill          | `rounded-full`      |
+| Inputs             | pill          | `rounded-full`      |
+| Cards/contenedores | 16px (1rem)   | `rounded` (DEFAULT) |
+| Cards elevadas     | 32px (2rem)   | `rounded-lg`        |
+| Modales            | 48px (3rem)   | `rounded-xl`        |
+| Thumbnails         | 16px          | `rounded`           |
 
 ---
 
-## Rendimiento y Responsive (Mobile First)
+## Spacing
 
-`backdrop-filter` es costoso para la GPU.
+Escala rítmica de 8px con sesgo generoso — siempre preferir el valor mayor
+para garantizar touch targets amplios.
 
-### Degradación elegante (fallback obligatorio)
+| Token              | Valor | Uso                                  |
+| ------------------ | ----- | ------------------------------------ |
+| `unit`             | 8px   | Base mínima                          |
+| `stack-sm`         | 12px  | Separación entre elementos pequeños  |
+| `stack-md`         | 24px  | Separación entre secciones           |
+| `stack-lg`         | 48px  | Separación entre bloques principales |
+| `gutter`           | 24px  | Espacio entre columnas               |
+| `container-margin` | 32px  | Margen lateral (desktop)             |
+| `margin-mobile`    | 20px  | Margen lateral (móvil)               |
+
+### Touch targets
+
+- Ningún elemento interactivo (botón, link, input) menor a **48px** de altura
+- Inputs: mínimo 56px de altura
+- Botones primarios: mínimo 56-64px de altura (py-5 o py-6)
+
+---
+
+## Elevación y profundidad
+
+Profundidad via **Soft Tonal Layering** — NO sombras duras tipo brutalist.
+
+### Sombras
 
 ```css
-.glass-panel {
-  /* Fallback si no hay soporte */
-  background: rgba(255, 255, 255, 0.7);
+/* Sombra ambiental principal - difusa con tinte lavender */
+.soft-shadow {
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
-@supports (backdrop-filter: blur(10px)) {
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(24px);
-  }
+/* Glow suave para estados activos/hover */
+.soft-glow {
+  box-shadow: 0 10px 40px -10px rgba(197, 197, 216, 0.15);
+}
+
+.soft-glow-active {
+  box-shadow: 0 15px 45px -5px rgba(197, 197, 216, 0.3);
 }
 ```
 
-### Breakpoint móvil (< 768px)
-1. Reducir blur a la mitad (máx 10px)
-2. Prohibido apilar elementos de cristal — modales y menús con fondos sólidos
-3. No usar múltiples `backdrop-filter` simultáneos
+### Liquid Glass (uso limitado)
+
+Solo para paneles flotantes tipo el total del carrito:
+
+```css
+.liquid-glass {
+  backdrop-filter: blur(12px) saturate(120%);
+  background: rgba(197, 197, 216, 0.08);
+  border-top: 1px solid rgba(145, 144, 150, 0.2);
+}
+```
+
+NO usar backdrop-filter en cards o contenedores regulares.
+
+### Textura de grano (grain)
+
+Una textura de ruido al 3% de opacidad sobre superficies principales para
+calidad material. Rompe el color plano digital y da sensación de papel/tela.
+
+---
+
+## Componentes
+
+### TopAppBar (Header fijo)
+
+- Fijo arriba (`fixed top-0`)
+- Altura: 64px (h-16)
+- Fondo: `surface-container` con `backdrop-blur-lg`
+- Borde inferior: `border-outline-variant`
+- Contenido: Logo + nombre "Changarro" | Total actual + Avatar
+- El total de venta actual se muestra como badge pill
+
+### Bottom Navigation (Tab Bar)
+
+- Fijo abajo (`fixed bottom-0`)
+- Fondo: `surface-container-lowest/90` con `backdrop-blur-xl`
+- Borde superior + sombra ascendente
+- 4 tabs: Ventas, Inventario/Nueva, Carrito, Ajustes
+- Tab activo: pill con `bg-primary-container text-on-primary-container`
+- Tabs inactivos: `text-on-surface-variant`
+- Icono filled para tab activo, outline para inactivos
+
+### Botones
+
+- Pill-shaped (`rounded-full`)
+- Grandes (py-5 mínimo, full-width en móvil)
+- Primario: `bg-primary-container text-on-primary-container`
+- Hover: sutil `shadow-lg` + `scale-[1.02]`
+- Active: `scale-95` (feedback táctil)
+- Sombras suaves y amplias (0 8px 24px)
+
+### Cards
+
+- `bg-surface-container` con `border border-outline-variant`
+- Border radius: 16px (`rounded` DEFAULT)
+- Hover: `border-surface-tint`
+- NO glass effect en cards regulares
+
+### Inputs
+
+- Altura mínima 56px
+- `bg-surface-container-low border border-outline-variant rounded-full`
+- Padding generoso: `px-6 py-4`
+- Focus: `ring-2 ring-primary-fixed-dim border-transparent`
+- Placeholder: `text-on-surface-variant/40`
+
+### Chips de categoría
+
+- Pill-shaped (`rounded-full`)
+- Activo: `bg-primary-container text-on-primary-container border-primary-container`
+- Inactivo: `border border-outline-variant text-on-surface-variant`
+- Hover inactivo: `bg-surface-variant border-on-surface-variant`
+- Padding: `px-6 py-2.5`
+
+### Listas (items del carrito)
+
+- `bg-surface-container border border-outline-variant rounded-lg`
+- Padding generoso: `p-stack-md` (24px)
+- Thumbnail: 80x80px (`w-20 h-20`)
+- Controles cantidad: botones circulares 32px (`w-8 h-8 rounded-full`)
+- Hover: `border-surface-tint` (highlight sutil)
+
+---
+
+## Navegación (4 tabs)
+
+| Tab        | Icono                     | Label              | Ruta        |
+| ---------- | ------------------------- | ------------------ | ----------- |
+| Ventas     | `point_of_sale`           | Ventas             | `/`         |
+| Inventario | `inventory_2` o `add_box` | Inventario / Nueva | `/products` |
+| Carrito    | `shopping_cart`           | Carrito            | `/cart`     |
+| Ajustes    | `settings`                | Ajustes            | `/settings` |
 
 ---
 
 ## Reglas de implementación para este proyecto
 
-1. Todos los valores de glass se consumen vía tokens `--bc-*`, nunca hardcodeados
-2. Los componentes `ui/` base deben respetar la jerarquía de capas
-3. La vista de venta (punto de venta) vive sobre una superficie Nivel 1 (glass-panel-md); sus botones y controles son Nivel 3 (sólidos)
-4. La tab bar de navegación es Nivel 1 (glass-panel)
-5. Modales de confirmación (cobrar, eliminar) son Nivel 2
-6. Siempre proveer fallback para `backdrop-filter` (via `-webkit-backdrop-filter`)
-7. En dark mode, reemplazar sombras por bordes especulares
-8. Mantener contraste WCAG AA mínimo en texto sobre superficies glass
-9. El fondo base (Level 0) es un gradiente fluido animado (`bg-fluid-gradient`) — no un color sólido
-10. La paleta principal es sage green (#4f6056) — transmite calma y confianza
-11. La toolbar del punto de venta es fija y prominente — acceso inmediato
-12. La tab bar usa navegación fija: Vender, Productos, Historial
-13. Iconografía: Material Symbols Outlined (weight 300, FILL 0, optical size 20)
+1. Dark mode es el diseño BASE — no hay light mode en el POC
+2. Todos los colores se consumen vía tokens del design system, nunca hardcodeados
+3. Tipografía: Plus Jakarta Sans para headlines/labels, Atkinson Hyperlegible Next para body
+4. Touch targets mínimo 48px siempre
+5. Inputs mínimo 56px de altura
+6. Botones primarios pill-shaped y full-width en móvil
+7. Cards con bordes sutiles (`outline-variant`), NO glassmorphism
+8. Liquid glass SOLO en paneles flotantes (total del carrito)
+9. TopAppBar fijo con logo + total de venta actual
+10. Bottom nav con 4 tabs, pill activo
+11. Iconografía: Material Symbols Outlined (wght 400, FILL 0, opsz 24; FILL 1 en tab activo)
+12. Labels UPPERCASE con tracking extendido
+13. Feedback táctil: `active:scale-95` en todos los botones y tabs
+14. Sombras lavender-tinted, suaves y difusas
+15. No usar sage green — la paleta es lavender/neutral warm
