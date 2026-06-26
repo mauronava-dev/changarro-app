@@ -91,17 +91,17 @@ Contiene la aplicación completa (frontend + shell Tauri). Es una aplicación qu
 
 ## Stack técnico
 
-| Capa | Tecnología |
-|------|-----------|
-| Bundler | Vite 6+ |
-| Framework | Vue 3.5+ (Composition API, `<script setup>`) |
-| Router | Vue Router 4 |
-| Estado | Pinia (setup stores) |
-| Styling | Tailwind CSS 4 (CSS-first, `@tailwindcss/vite`) |
-| TypeScript | Strict mode |
-| Shell nativo | Tauri 2 |
-| Storage POC | IndexedDB (Dexie.js o abstracción propia) |
-| Testing | Vitest + Playwright (cuando se requiera) |
+| Capa         | Tecnología                                      |
+| ------------ | ----------------------------------------------- |
+| Bundler      | Vite 6+                                         |
+| Framework    | Vue 3.5+ (Composition API, `<script setup>`)    |
+| Router       | Vue Router 4                                    |
+| Estado       | Pinia (setup stores)                            |
+| Styling      | Tailwind CSS 4 (CSS-first, `@tailwindcss/vite`) |
+| TypeScript   | Strict mode                                     |
+| Shell nativo | Tauri 2                                         |
+| Storage POC  | IndexedDB (Dexie.js o abstracción propia)       |
+| Testing      | Vitest + Playwright (cuando se requiera)        |
 
 ---
 
@@ -126,13 +126,13 @@ Contiene la aplicación completa (frontend + shell Tauri). Es una aplicación qu
 interface Product {
   id: string
   name: string
-  price: number            // precio unitario de venta
-  cost?: number            // costo de compra (opcional)
-  category?: string        // categoría del producto
-  unit: string             // pieza, kg, litro, etc.
+  price: number // precio unitario de venta
+  cost?: number // costo de compra (opcional)
+  category?: string // categoría del producto
+  unit: string // pieza, kg, litro, etc.
   isActive: boolean
-  createdAt: string        // ISO 8601
-  updatedAt: string        // ISO 8601
+  createdAt: string // ISO 8601
+  updatedAt: string // ISO 8601
 }
 ```
 
@@ -144,32 +144,55 @@ interface Sale {
   items: SaleItem[]
   total: number
   paymentMethod: 'cash' | 'card' | 'transfer'
-  createdAt: string        // ISO 8601
+  createdAt: string // ISO 8601
 }
 
 interface SaleItem {
   productId: string
-  productName: string      // snapshot del nombre al momento de la venta
+  productName: string // snapshot del nombre al momento de la venta
   quantity: number
-  unitPrice: number        // precio al momento de la venta
+  unitPrice: number // precio al momento de la venta
   subtotal: number
 }
 ```
 
 ---
 
+## Stores (Pinia)
+
+- `useProductsStore` — catálogo de productos, búsqueda
+- `useCartStore` — carrito de venta actual
+- `useSalesStore` — historial de ventas completadas
+- `useSettingsStore` — preferencias del negocio
+
+## Rutas
+
+```
+/                       → HomeView (catálogo de productos + FAB venta rápida)
+/cart                   → CartView (carrito + total + finalizar)
+/sales                  → SalesView (historial de ventas)
+/quick-sale             → QuickSaleView (formulario venta rápida)
+/settings               → SettingsView (acceso desde TopAppBar)
+/settings/inventory     → InventoryView (gestión de productos)
+```
+
+---
+
 ## Estado actual
 
-**Fase: Pre-scaffolding**
+**Fase: POC funcional (Fase 1)**
 
-El proyecto está en definición. Se han establecido:
-- Stack técnico
-- Lineamientos visuales (Liquid Glass design system)
+El proyecto tiene implementado:
+
+- Stack técnico completo
+- Lineamientos visuales (Serene Hearth design system)
 - Convenciones de código (Vue, Tailwind, TypeScript)
 - Configuración base de Tauri 2 (con soporte Android)
 - Modelo de datos
+- Layout base (TopAppBar + Bottom Nav 3 tabs)
+- Vistas principales (Inicio, Carrito, Ventas, Venta Rápida, Ajustes, Inventario)
 
-Siguiente paso: scaffolding del frontend y Fase 1 del POC.
+Siguiente paso: integrar stores con IndexedDB para persistencia.
 
 ---
 

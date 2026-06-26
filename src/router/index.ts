@@ -5,15 +5,9 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'sell',
-      component: () => import('@/views/SellView.vue'),
-      meta: { title: 'Ventas' },
-    },
-    {
-      path: '/products',
-      name: 'products',
-      component: () => import('@/views/ProductsView.vue'),
-      meta: { title: 'Inventario' },
+      name: 'home',
+      component: () => import('@/views/HomeView.vue'),
+      meta: { title: 'Inicio' },
     },
     {
       path: '/cart',
@@ -22,10 +16,28 @@ const router = createRouter({
       meta: { title: 'Carrito' },
     },
     {
+      path: '/sales',
+      name: 'sales',
+      component: () => import('@/views/SalesView.vue'),
+      meta: { title: 'Ventas' },
+    },
+    {
+      path: '/quick-sale',
+      name: 'quick-sale',
+      component: () => import('@/views/QuickSaleView.vue'),
+      meta: { title: 'Venta Rápida' },
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: () => import('@/views/SettingsView.vue'),
       meta: { title: 'Ajustes' },
+    },
+    {
+      path: '/settings/inventory',
+      name: 'inventory',
+      component: () => import('@/views/InventoryView.vue'),
+      meta: { title: 'Inventario' },
     },
   ],
 })

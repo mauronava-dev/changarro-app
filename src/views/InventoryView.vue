@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const searchQuery = ref('')
 
@@ -16,8 +17,15 @@ function formatPrice(price: number): string {
 
 <template>
   <div class="max-w-2xl mx-auto">
-    <!-- Header -->
+    <!-- Header with back button -->
     <div class="flex items-center gap-3 mb-6">
+      <RouterLink
+        to="/settings"
+        class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors active:scale-95"
+        aria-label="Volver a ajustes"
+      >
+        <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+      </RouterLink>
       <h1
         class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
@@ -67,14 +75,30 @@ function formatPrice(price: number): string {
           </p>
         </div>
 
-        <!-- Add to cart button -->
+        <!-- Edit button -->
         <button
           class="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-high hover:bg-surface-variant transition-colors active:scale-95"
-          aria-label="Agregar al carrito"
+          aria-label="Editar producto"
         >
-          <span class="material-symbols-outlined text-on-surface">add_shopping_cart</span>
+          <span class="material-symbols-outlined text-on-surface">edit</span>
+        </button>
+
+        <!-- Delete button -->
+        <button
+          class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full hover:bg-error/10 transition-colors active:scale-95"
+          aria-label="Eliminar producto"
+        >
+          <span class="material-symbols-outlined text-error">delete</span>
         </button>
       </article>
     </div>
+
+    <!-- FAB: Add Product -->
+    <button
+      class="fixed bottom-28 right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-primary-container text-on-primary-container shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
+      aria-label="Agregar producto"
+    >
+      <span class="material-symbols-outlined text-[28px]">add</span>
+    </button>
   </div>
 </template>

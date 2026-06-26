@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const includeTax = ref(true)
 </script>
@@ -13,9 +14,31 @@ const includeTax = ref(true)
       Ajustes
     </h1>
 
+    <!-- INVENTARIO Section -->
+    <h2
+      class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+    >
+      Productos
+    </h2>
+
+    <RouterLink
+      to="/settings/inventory"
+      class="flex justify-between items-center py-4 border-b border-outline-variant group"
+    >
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-on-surface-variant">inventory_2</span>
+        <span class="text-[18px] text-on-surface font-sans">Gestionar inventario</span>
+      </div>
+      <span
+        class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors"
+      >
+        chevron_right
+      </span>
+    </RouterLink>
+
     <!-- GENERAL Section -->
     <h2
-      class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+      class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
     >
       General
     </h2>
@@ -32,7 +55,7 @@ const includeTax = ref(true)
 
     <!-- IMPUESTOS Section -->
     <h2
-      class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+      class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
     >
       Impuestos
     </h2>
@@ -60,7 +83,7 @@ const includeTax = ref(true)
 
     <!-- DATOS Section -->
     <h2
-      class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+      class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
     >
       Datos
     </h2>
@@ -76,7 +99,7 @@ const includeTax = ref(true)
 
     <!-- ACERCA DE Section -->
     <h2
-      class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+      class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
     >
       Acerca de
     </h2>

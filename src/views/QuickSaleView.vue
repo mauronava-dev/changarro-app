@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const productName = ref('')
 const price = ref('')
@@ -16,13 +17,22 @@ function addToCart() {
 
 <template>
   <div class="max-w-2xl mx-auto">
-    <!-- Header -->
+    <!-- Header with back button -->
     <section class="mb-8">
-      <h1
-        class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
-      >
-        Venta Rápida
-      </h1>
+      <div class="flex items-center gap-3 mb-2">
+        <RouterLink
+          to="/"
+          class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors active:scale-95"
+          aria-label="Volver al inicio"
+        >
+          <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+        </RouterLink>
+        <h1
+          class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
+        >
+          Venta Rápida
+        </h1>
+      </div>
       <p class="mt-2 text-[20px] leading-[32px] text-on-surface-variant font-sans">
         Registra un producto o servicio personalizado a tu venta actual.
       </p>
@@ -30,13 +40,13 @@ function addToCart() {
 
     <!-- Form Card -->
     <div
-      class="bg-surface-container border border-white/5 rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-8 md:p-[48px]"
+      class="bg-surface-container border border-white/5 rounded-[2rem] shadow-soft p-8 md:p-[48px]"
     >
       <form @submit.prevent="addToCart" class="flex flex-col gap-8">
         <!-- Product Name -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Nombre del Producto
           </label>
@@ -51,7 +61,7 @@ function addToCart() {
         <!-- Price -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Precio (MXN)
           </label>
@@ -75,7 +85,7 @@ function addToCart() {
         <!-- Category Chips -->
         <div class="flex flex-col gap-3">
           <label
-            class="uppercase tracking-[0.05em] text-[16px] font-semibold text-on-surface-variant font-display"
+            class="uppercase tracking-wider text-[16px] font-semibold text-on-surface-variant font-display"
           >
             Categoría
           </label>

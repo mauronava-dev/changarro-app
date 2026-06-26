@@ -18,23 +18,26 @@ diseñada para comerciantes de negocios pequeños.
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  TopAppBar (fijo)                                       │
-│  [☰ Menú] [Logo Changarro]         [$Total] [👤 Perfil]│
+│  [Logo Changarro]               [$Total] [👤 Ajustes]   │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │                   Área principal                         │
 │                                                         │
-│   VISTA VENTAS (venta rápida / agregar producto)        │
-│   ó                                                     │
-│   VISTA INVENTARIO (catálogo de productos)              │
+│   VISTA INICIO (catálogo + FAB venta rápida)            │
 │   ó                                                     │
 │   VISTA CARRITO (items + total + finalizar)             │
 │   ó                                                     │
-│   VISTA AJUSTES (configuración)                         │
-│                                                         │
+│   VISTA VENTAS (historial de ventas)                    │
+│   ó                                                     │
+│   VISTA AJUSTES (desde TopAppBar, no nav)               │
+│   ó                                                     │
+│   VISTA INVENTARIO (sub-página de Ajustes)              │
+│   ó                                                     │
+│   VISTA VENTA RÁPIDA (desde FAB en Inicio)              │
 │                                                         │
 ├─────────────────────────────────────────────────────────┤
-│  Bottom Navigation (4 tabs, fijo)                       │
-│  [💰 Ventas] [📦 Inventario] [🛒 Carrito] [⚙ Ajustes]  │
+│  Bottom Navigation (3 tabs, fijo)                       │
+│  [🏠 Inicio] [🛒 Carrito] [💰 Ventas]                   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -44,10 +47,9 @@ diseñada para comerciantes de negocios pequeños.
 
 ### Contenido
 
-- Botón menú (hamburguesa) a la izquierda
 - Logo + nombre "Changarro" (text-primary-fixed-dim, font-headline-md bold)
 - Total de venta actual en badge pill (a la derecha)
-- Botón avatar/perfil (icono account_circle)
+- Botón avatar/perfil (icono account_circle) → navega a /settings
 
 ### Comportamiento
 
@@ -55,19 +57,19 @@ diseñada para comerciantes de negocios pequeños.
 - Altura 64px (h-16)
 - `bg-surface-container` con backdrop-blur
 - Borde inferior `border-outline-variant`
+- El botón account_circle es un RouterLink a /settings
 
 ---
 
 ## Navegación principal (Bottom Nav)
 
-### 4 tabs
+### 3 tabs
 
-| Tab        | Icono           | Label      | Ruta        |
-| ---------- | --------------- | ---------- | ----------- |
-| Ventas     | `point_of_sale` | Ventas     | `/`         |
-| Inventario | `inventory_2`   | Inventario | `/products` |
-| Carrito    | `shopping_cart` | Carrito    | `/cart`     |
-| Ajustes    | `settings`      | Ajustes    | `/settings` |
+| Tab     | Icono           | Label   | Ruta     |
+| ------- | --------------- | ------- | -------- |
+| Inicio  | `home`          | Inicio  | `/`      |
+| Carrito | `shopping_cart` | Carrito | `/cart`  |
+| Ventas  | `point_of_sale` | Ventas  | `/sales` |
 
 ### Comportamiento
 
@@ -78,163 +80,96 @@ diseñada para comerciantes de negocios pequeños.
 - Tabs inactivos: `text-on-surface-variant`, icono FILL 0
 - Feedback táctil: `active:scale-90` en cada tab
 
-### En desktop (> 768px)
-
-- Se mantiene como bottom nav o se convierte en side nav
-- Los elementos se reorganizan aprovechando el espacio horizontal
-
 ---
 
 ## Vistas principales
 
-### Vista Ventas (Venta Rápida)
+### Vista Inicio (Catálogo de Productos)
 
-La vista principal y más frecuente. Permite agregar un producto o servicio
-personalizado a la venta actual.
+La vista principal. Muestra los productos del catálogo para venta rápida.
 
 **Contenido:**
 
-- Título: "Venta Rápida" (headline-lg-mobile)
-- Subtítulo explicativo (body-lg, on-surface-variant)
-- Formulario en card elevada (form-card con soft-shadow):
-  - Input "Nombre del Producto" (pill, full-width, placeholder: "e.g. Servicio Especial")
-  - Input "Precio (MXN)" (pill, grande, signo $ como prefix, type number)
-  - Chips de categoría (SERVICIO, PRODUCTO, OTRO) — selección exclusiva
-  - Botón "Agregar al Carrito" (pill, full-width, bg-primary-container, icono shopping_cart filled)
-- Nota informativa al pie (border-left-4 accent, body-md)
+- Título: "Productos" (headline-lg-mobile)
+- Subtítulo: "Toca un producto para agregarlo al carrito" (body-md, on-surface-variant)
+- Lista de productos (cards clickeables)
+- FAB (+) en bottom-right (above nav) → navega a /quick-sale
 
 **Flujo:**
 
-1. El comerciante escribe nombre y precio del producto/servicio
-2. Opcionalmente selecciona categoría
-3. Toca "Agregar al Carrito"
-4. Feedback visual: botón muestra spinner → "¡LISTO!" con check_circle
-5. El total en el TopAppBar se actualiza en tiempo real
+1. El comerciante ve los productos del catálogo
+2. Toca un producto → se agrega al carrito
+3. Toca el FAB → va al formulario de Venta Rápida
 
-### Vista Inventario (Catálogo)
+### Vista Venta Rápida
 
-Gestión del catálogo de productos registrados del negocio.
+Formulario para agregar un producto o servicio personalizado a la venta actual.
+Accesible desde el FAB en la vista de Inicio.
 
 **Contenido:**
 
-- Barra de búsqueda (pill input, full-width)
-- Lista de productos con thumbnails (80x80px, rounded)
-- Cada producto muestra: imagen, nombre, precio, categoría
-- Glow suave en hover (soft-glow)
-- FAB o botón para agregar nuevo producto
-
-**Acciones por producto:**
-
-- Tap → agregar al carrito
-- Editar (precio, nombre, categoría, imagen)
-- Desactivar/activar
+- Header con botón back (arrow_back) que regresa a /
+- Título: "Venta Rápida" (headline-lg-mobile)
+- Subtítulo explicativo (body-lg, on-surface-variant)
+- Formulario en card elevada:
+  - Input "Nombre del Producto" (pill, full-width)
+  - Input "Precio (MXN)" (pill, grande, signo $ como prefix)
+  - Chips de categoría (SERVICIO, PRODUCTO, OTRO)
+  - Botón "Agregar al Carrito" (pill, full-width, bg-primary-container)
+- Nota informativa al pie
 
 ### Vista Carrito
 
-Muestra los items de la venta actual y permite finalizar.
+Muestra los items de la venta actual y permite finalizar. (Sin cambios)
+
+### Vista Ventas (Historial)
+
+Muestra el historial de ventas completadas.
 
 **Contenido:**
 
-- Header: "Carrito" (headline-lg-mobile) + badge con contador de items (label-md, uppercase)
-- Lista de items con:
-  - Thumbnail (80x80px, rounded, border-outline-variant)
-  - Nombre del producto (label-md, bold, on-surface)
-  - Precio unitario (body-lg, bold, surface-tint)
-  - Controles de cantidad: botones circulares -/+ (w-8 h-8 rounded-full)
-  - Botón eliminar (material icon delete, color error)
-- Panel flotante liquid-glass (fixed, above bottom nav):
-  - Subtotal (label-md uppercase + body-lg bold)
-  - Impuestos 16% (label-md uppercase + body-lg bold)
-  - Separador (h-[1px] bg-outline-variant)
-  - Total (headline-md, color surface-tint)
-  - Botón "Finalizar Venta" (pill, full-width, bg-surface-tint, icono payments)
-
-**Interacciones:**
-
-- Tap delete → animación scale(0.9) + translateX(100px) + opacity 0 → remove
-- Tap +/- → ajustar cantidad, recalcular subtotales y total
-- "Finalizar Venta" → registra venta, vacía carrito, feedback visual
+- Título: "Ventas" (headline-lg-mobile)
+- Estado vacío (cuando no hay ventas):
+  - Icono receipt_long (48px, text-on-surface-variant/50)
+  - Texto: "No se han realizado ventas aún" (font-display, semibold)
+  - Subtítulo: "Las ventas finalizadas aparecerán aquí"
+- Cuando hay ventas: lista de ventas completadas con fecha, total, items
 
 ### Vista Ajustes (Configuración)
 
-Configuración general del negocio y la aplicación.
+Accesible desde el botón account_circle en el TopAppBar, NO desde el bottom nav.
 
 **Contenido:**
 
-- Secciones separadas con headers (label-md, uppercase, tracking-widest)
-- Toggle switches para opciones booleanas (oversized, tactile)
-- Campos de texto para nombre del negocio
-- Selector de moneda
-- Configuración de impuestos (toggle + input porcentaje)
-- Botón exportar datos
-- Sección "Acerca de"
+- Link "Gestionar inventario" → /settings/inventory
+- Nombre del negocio, moneda
+- Configuración de impuestos (toggle + porcentaje)
+- Exportar ventas
+- Acerca de (versión)
 
----
+### Vista Inventario (Gestión de productos)
 
-## Interacciones clave
+Sub-página de Ajustes. Permite agregar, editar y eliminar productos del catálogo.
 
-| Acción                      | Método                             |
-| --------------------------- | ---------------------------------- |
-| Agregar producto al carrito | Formulario en Vista Ventas         |
-| Cambiar cantidad en carrito | Botones -/+ en Vista Carrito       |
-| Eliminar item del carrito   | Botón delete con animación         |
-| Buscar producto             | Input búsqueda en Vista Inventario |
-| Finalizar venta             | Botón "Finalizar Venta" en Carrito |
-| Crear producto              | Formulario en Inventario           |
-| Navegar entre vistas        | Bottom nav (4 tabs)                |
+**Contenido:**
 
----
-
-## Modales y flujos
-
-### Modal "Cobrar" (finalizar venta)
-
-- Muestra resumen de items y total
-- Selector de método de pago (efectivo, tarjeta, transferencia)
-- Campo de "recibido" (para calcular cambio en efectivo)
-- Botón confirmar
-- Confirmación visual de venta registrada (toast/feedback)
-
-### Modal "Nuevo producto"
-
-- Formulario con campos del producto
-- Validación en tiempo real
-- Botón guardar
-- Feedback de éxito
-
-### Modal "Detalle de venta" (desde historial)
-
-- Fecha y hora completa
-- Lista detallada de items con cantidades y precios
-- Total y método de pago
-- (Futuro: opción de devolver/cancelar venta)
-
----
-
-## Interacciones clave
-
-| Acción                      | Método                             |
-| --------------------------- | ---------------------------------- |
-| Agregar producto al carrito | Tap en producto / botón +          |
-| Cambiar cantidad en carrito | Tap en cantidad → editar           |
-| Eliminar item del carrito   | Swipe o botón eliminar             |
-| Buscar producto             | Tap en barra de búsqueda, escribir |
-| Cobrar venta                | Botón cobrar prominente            |
-| Crear producto              | Botón + en vista Productos         |
-| Ver detalle de venta        | Tap en venta del historial         |
-| Cambiar tema                | Toggle en toolbar                  |
+- Header con botón back → /settings
+- Título: "Inventario" + badge con conteo de items
+- Barra de búsqueda
+- Lista de productos con acciones: editar, eliminar
+- FAB para agregar nuevo producto
 
 ---
 
 ## Rutas (Vue Router)
 
 ```
-/                       → Vista Ventas (venta rápida, agregar producto custom)
-/products               → Vista Inventario (catálogo de productos)
-/products/new           → Crear nuevo producto
-/products/:id/edit      → Editar producto
-/cart                   → Vista Carrito (items, total, finalizar venta)
-/settings               → Vista Ajustes (configuración del negocio)
+/                       → HomeView (catálogo de productos + FAB)
+/cart                   → CartView (carrito + total + finalizar)
+/sales                  → SalesView (historial de ventas)
+/quick-sale             → QuickSaleView (formulario venta rápida)
+/settings               → SettingsView (configuración, acceso desde TopAppBar)
+/settings/inventory     → InventoryView (gestión de productos)
 ```
 
 ---
@@ -250,10 +185,10 @@ Configuración general del negocio y la aplicación.
 
 ### Stores (Pinia)
 
-- `useProductsStore` — CRUD de productos, búsqueda, filtros
+- `useProductsStore` — catálogo de productos, búsqueda
 - `useCartStore` — carrito de venta actual, agregar/quitar items, totales
-- `useSalesStore` — registro de ventas completadas, historial
-- `useSettingsStore` — preferencias del usuario (tema, moneda, nombre negocio)
+- `useSalesStore` — historial de ventas completadas
+- `useSettingsStore` — preferencias del negocio (nombre, moneda, impuestos)
 
 ---
 
@@ -281,12 +216,13 @@ Configuración general del negocio y la aplicación.
 
 ### Fase 1 - POC funcional
 
-1. Layout base (TopAppBar + Bottom Nav + área principal)
-2. Vista Ventas: formulario de venta rápida (nombre + precio + categoría + agregar)
-3. Vista Carrito: lista de items, totales, botón finalizar venta
-4. Vista Inventario: lista de productos, crear producto
-5. Almacenamiento en IndexedDB (productos, carrito, ventas)
-6. Total de venta actual visible en TopAppBar
+1. Layout base (TopAppBar + Bottom Nav 3 tabs + área principal)
+2. Vista Inicio: catálogo de productos con FAB para venta rápida
+3. Vista Venta Rápida: formulario (nombre + precio + categoría + agregar)
+4. Vista Carrito: lista de items, totales, botón finalizar venta
+5. Vista Ventas: historial con empty state
+6. Almacenamiento en IndexedDB (productos, carrito, ventas)
+7. Total de venta actual visible en TopAppBar
 
 ### Fase 2 - Usabilidad
 
@@ -299,8 +235,8 @@ Configuración general del negocio y la aplicación.
 
 ### Fase 3 - Funcionalidad extendida
 
-1. Vista Ajustes (nombre negocio, moneda, impuestos)
-2. Historial de ventas (dentro de Ajustes o como sub-vista de Ventas)
+1. Vista Ajustes completa (nombre negocio, moneda, impuestos)
+2. Gestión de inventario (agregar/editar/eliminar productos)
 3. Exportar datos (CSV/JSON)
 4. Producto más vendido y estadísticas básicas
 5. Desactivar/reactivar productos

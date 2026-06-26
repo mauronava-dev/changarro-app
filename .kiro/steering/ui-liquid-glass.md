@@ -224,14 +224,16 @@ calidad material. Rompe el color plano digital y da sensación de papel/tela.
 
 ---
 
-## Navegación (4 tabs)
+## Navegación (3 tabs)
 
-| Tab        | Icono                     | Label              | Ruta        |
-| ---------- | ------------------------- | ------------------ | ----------- |
-| Ventas     | `point_of_sale`           | Ventas             | `/`         |
-| Inventario | `inventory_2` o `add_box` | Inventario / Nueva | `/products` |
-| Carrito    | `shopping_cart`           | Carrito            | `/cart`     |
-| Ajustes    | `settings`                | Ajustes            | `/settings` |
+| Tab     | Icono           | Label   | Ruta     |
+| ------- | --------------- | ------- | -------- |
+| Inicio  | `home`          | Inicio  | `/`      |
+| Carrito | `shopping_cart` | Carrito | `/cart`  |
+| Ventas  | `point_of_sale` | Ventas  | `/sales` |
+
+Ajustes se accede desde el TopAppBar (icono account_circle), no desde el bottom nav.
+Inventario es una sub-página de Ajustes (/settings/inventory).
 
 ---
 
