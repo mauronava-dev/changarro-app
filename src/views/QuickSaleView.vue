@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, computed } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart'
+
+const router = useRouter()
+const cartStore = useCartStore()
 
 const productName = ref('')
 const price = ref('')
@@ -8,10 +12,16 @@ const selectedCategory = ref('SERVICIO')
 
 const categories = ['SERVICIO', 'PRODUCTO', 'OTRO']
 
+const isFormValid = computed(() => {
+  return productName.value.trim().length > 0 && parseFloat(price.value) > 0
+})
+
 function addToCart() {
-  // TODO: integrate with cart store
+  if (!isFormValid.value) return
+  cartStore.addCustomItem(productName.value.trim(), parseFloat(price.value))
   productName.value = ''
   price.value = ''
+  router.push('/cart')
 }
 </script>
 

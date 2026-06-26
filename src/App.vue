@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { useCartStore } from '@/stores/cart'
 
 const route = useRoute()
+const cartStore = useCartStore()
 
 const tabs = [
   { label: 'Inicio', icon: 'home', route: '/', name: 'home' },
@@ -11,6 +13,10 @@ const tabs = [
 
 function isActive(tabName: string): boolean {
   return route.name === tabName
+}
+
+function formatPrice(price: number): string {
+  return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 </script>
 
@@ -27,11 +33,12 @@ function isActive(tabName: string): boolean {
 
     <!-- Right: Total badge + Settings icon -->
     <div class="flex items-center gap-3">
-      <span
-        class="text-label-md bg-surface-container-high px-4 py-1.5 rounded-full border border-outline-variant text-primary-fixed-dim"
+      <RouterLink
+        to="/cart"
+        class="text-label-md bg-surface-container-high px-4 py-1.5 rounded-full border border-outline-variant text-primary-fixed-dim transition-colors hover:bg-surface-variant"
       >
-        $0.00
-      </span>
+        ${{ formatPrice(cartStore.total) }}
+      </RouterLink>
       <RouterLink
         to="/settings"
         class="flex items-center justify-center w-12 h-12 rounded-full hover:bg-surface-variant transition-colors"

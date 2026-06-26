@@ -2,20 +2,21 @@
 import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
+import { useCartStore } from '@/stores/cart'
 
-const store = useProductsStore()
+const productsStore = useProductsStore()
+const cartStore = useCartStore()
 
 onMounted(() => {
-  store.loadProducts()
+  productsStore.loadProducts()
 })
 
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function addToCart(productId: string) {
-  // TODO: integrate with cart store
-  console.log('Added to cart:', productId)
+function addToCart(product: { id: string; name: string; price: number }) {
+  cartStore.addItem(product)
 }
 </script>
 
@@ -34,21 +35,21 @@ function addToCart(productId: string) {
     </section>
 
     <!-- Loading -->
-    <div v-if="store.isLoading" class="flex justify-center py-16">
+    <div v-if="productsStore.isLoading" class="flex justify-center py-16">
       <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
         >progress_activity</span
       >
     </div>
 
     <!-- Product List -->
-    <div v-else-if="store.activeProducts.length > 0" class="flex flex-col gap-4">
+    <div v-else-if="productsStore.activeProducts.length > 0" class="flex flex-col gap-4">
       <article
-        v-for="product in store.activeProducts"
+        v-for="product in productsStore.activeProducts"
         :key="product.id"
         class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-[24px] transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.98]"
         role="button"
         :aria-label="`Agregar ${product.name} al carrito`"
-        @click="addToCart(product.id)"
+        @click="addToCart(product)"
       >
         <!-- Thumbnail -->
         <div
