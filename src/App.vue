@@ -70,7 +70,7 @@ function formatPrice(price: number): string {
       :key="tab.name"
       :to="tab.route"
       :class="[
-        'flex items-center gap-2 transition-all duration-200 active:scale-90',
+        'relative flex items-center gap-2 transition-all duration-200 active:scale-90',
         isActive(tab.name)
           ? 'bg-primary-container text-on-primary-container rounded-full px-5 py-2'
           : 'text-on-surface-variant p-2 hover:bg-surface-variant rounded-full',
@@ -84,6 +84,13 @@ function formatPrice(price: number): string {
         {{ tab.icon }}
       </span>
       <span v-if="isActive(tab.name)" class="text-label-md">{{ tab.label }}</span>
+      <!-- Cart badge -->
+      <span
+        v-if="tab.name === 'cart' && cartStore.itemCount > 0"
+        class="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary-fixed-dim text-on-primary text-[11px] font-bold px-1"
+      >
+        {{ cartStore.itemCount > 99 ? '99+' : cartStore.itemCount }}
+      </span>
     </RouterLink>
   </nav>
 </template>
