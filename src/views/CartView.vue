@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
+const router = useRouter()
 const cartStore = useCartStore()
 
 // Delete confirmation modal
@@ -27,6 +29,11 @@ function confirmDelete() {
 function cancelDelete() {
   showDeleteModal.value = false
   itemToDelete.value = null
+}
+
+async function finalizeSale() {
+  await cartStore.finalizeSale()
+  router.push('/sales')
 }
 </script>
 
@@ -135,12 +142,12 @@ function cancelDelete() {
         </span>
       </div>
 
-      <!-- Tax -->
-      <div class="flex items-center justify-between mb-4">
+      <!-- Tax (only if enabled) -->
+      <div v-if="cartStore.taxEnabled" class="flex items-center justify-between mb-4">
         <span
           class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
         >
-          Impuestos (16%)
+          Impuestos ({{ Math.round(cartStore.taxRate * 100) }}%)
         </span>
         <span class="text-[18px] font-bold text-on-surface">
           ${{ formatPrice(cartStore.tax) }}
@@ -165,6 +172,7 @@ function cancelDelete() {
       <!-- Checkout Button -->
       <button
         class="w-full py-6 bg-surface-tint text-on-primary rounded-full text-[28px] font-bold flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
+        @click="finalizeSale"
       >
         <span
           class="material-symbols-outlined text-[28px]"

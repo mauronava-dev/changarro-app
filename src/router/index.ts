@@ -22,6 +22,12 @@ const router = createRouter({
       meta: { title: 'Ventas' },
     },
     {
+      path: '/sales/:id',
+      name: 'sale-detail',
+      component: () => import('@/views/SaleDetailView.vue'),
+      meta: { title: 'Detalle de Venta' },
+    },
+    {
       path: '/quick-sale',
       name: 'quick-sale',
       component: () => import('@/views/QuickSaleView.vue'),

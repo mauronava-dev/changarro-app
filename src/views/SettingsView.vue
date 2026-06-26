@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useSettingsStore } from '@/stores/settings'
 
-const includeTax = ref(true)
+const settingsStore = useSettingsStore()
+
+function toggleTax() {
+  settingsStore.setTaxEnabled(!settingsStore.taxEnabled)
+}
 </script>
 
 <template>
@@ -45,12 +49,16 @@ const includeTax = ref(true)
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
       <span class="text-[18px] text-on-surface font-sans">Nombre del negocio</span>
-      <span class="text-[18px] text-on-surface-variant font-sans">Mi Changarro</span>
+      <span class="text-[18px] text-on-surface-variant font-sans">{{
+        settingsStore.businessName
+      }}</span>
     </div>
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
       <span class="text-[18px] text-on-surface font-sans">Moneda</span>
-      <span class="text-[18px] text-on-surface-variant font-sans">MXN</span>
+      <span class="text-[18px] text-on-surface-variant font-sans">{{
+        settingsStore.currency
+      }}</span>
     </div>
 
     <!-- IMPUESTOS Section -->
@@ -61,24 +69,26 @@ const includeTax = ref(true)
     </h2>
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
-      <span class="text-[18px] text-on-surface font-sans">Incluir impuestos</span>
+      <span class="text-[18px] text-on-surface font-sans">Incluir IVA en ventas</span>
       <!-- Toggle -->
       <button
         class="relative w-12 h-6 rounded-full transition-colors duration-200"
-        :class="includeTax ? 'bg-primary-fixed-dim' : 'bg-surface-container-highest'"
+        :class="settingsStore.taxEnabled ? 'bg-primary-fixed-dim' : 'bg-surface-container-highest'"
         aria-label="Incluir impuestos"
-        @click="includeTax = !includeTax"
+        @click="toggleTax"
       >
         <span
           class="absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200"
-          :class="includeTax ? 'translate-x-6' : 'translate-x-0.5'"
+          :class="settingsStore.taxEnabled ? 'translate-x-6' : 'translate-x-0.5'"
         ></span>
       </button>
     </div>
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
       <span class="text-[18px] text-on-surface font-sans">Porcentaje</span>
-      <span class="text-[18px] text-on-surface-variant font-sans">16%</span>
+      <span class="text-[18px] text-on-surface-variant font-sans"
+        >{{ Math.round(settingsStore.taxRate * 100) }}%</span
+      >
     </div>
 
     <!-- DATOS Section -->
