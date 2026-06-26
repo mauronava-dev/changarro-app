@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
 import { useProductImages } from '@/composables/useProductImages'
+import { emitParticles } from '@/composables/useParticles'
 
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
@@ -49,8 +50,12 @@ function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function addToCart(product: { id: string; name: string; price: number }) {
+function addToCart(
+  product: { id: string; name: string; price: number },
+  event: MouseEvent | TouchEvent,
+) {
   cartStore.addItem(product)
+  emitParticles(event)
 }
 
 function clearSearch() {
@@ -129,7 +134,7 @@ function toggleView() {
         class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-5 transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.98]"
         role="button"
         :aria-label="`Agregar ${product.name} al carrito`"
-        @click="addToCart(product)"
+        @click="addToCart(product, $event)"
       >
         <!-- Thumbnail -->
         <div
@@ -178,7 +183,7 @@ function toggleView() {
         class="flex flex-col items-center bg-surface-container border border-outline-variant rounded-[1rem] p-4 transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.97]"
         role="button"
         :aria-label="`Agregar ${product.name} al carrito`"
-        @click="addToCart(product)"
+        @click="addToCart(product, $event)"
       >
         <!-- Thumbnail -->
         <div
