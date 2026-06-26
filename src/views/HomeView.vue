@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
@@ -7,8 +7,29 @@ import { useCartStore } from '@/stores/cart'
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
 
+const searchQuery = ref('')
+const viewMode = ref<'list' | 'grid'>('list')
+
 onMounted(() => {
   productsStore.loadProducts()
+})
+
+/**
+ * Normalize a string for accent/diacritic-insensitive search.
+ * Removes accents, dieresis, ñ → n, etc.
+ */
+function normalize(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+const filteredProducts = computed(() => {
+  const products = productsStore.activeProducts
+  const query = normalize(searchQuery.value.trim())
+  if (!query) return products
+  return products.filter((p) => normalize(p.name).includes(query))
 })
 
 function formatPrice(price: number): string {
@@ -18,21 +39,67 @@ function formatPrice(price: number): string {
 function addToCart(product: { id: string; name: string; price: number }) {
   cartStore.addItem(product)
 }
+
+function clearSearch() {
+  searchQuery.value = ''
+}
+
+function toggleView() {
+  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+}
 </script>
 
 <template>
   <div class="max-w-2xl mx-auto">
     <!-- Header -->
-    <section class="mb-6">
+    <section class="mb-4">
       <h1
         class="text-[32px] leading-[40px] tracking-[-0.02em] font-bold font-display text-on-background"
       >
         Productos
       </h1>
-      <p class="mt-2 text-[18px] text-on-surface-variant font-sans">
+      <p class="mt-1 text-[16px] text-on-surface-variant font-sans">
         Toca un producto para agregarlo al carrito
       </p>
     </section>
+
+    <!-- Search + View Toggle -->
+    <div class="flex items-center gap-3 mb-5">
+      <!-- Search input -->
+      <div class="relative flex-1">
+        <span
+          class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant"
+        >
+          search
+        </span>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Buscar producto..."
+          class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-14 pr-12 py-3.5 text-[16px] text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+        />
+        <!-- Clear button -->
+        <button
+          v-if="searchQuery"
+          class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full hover:bg-surface-variant transition-colors active:scale-95"
+          aria-label="Borrar búsqueda"
+          @click="clearSearch"
+        >
+          <span class="material-symbols-outlined text-on-surface-variant text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- View toggle -->
+      <button
+        class="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-low border border-outline-variant hover:bg-surface-variant transition-colors active:scale-95"
+        :aria-label="viewMode === 'list' ? 'Cambiar a cuadrícula' : 'Cambiar a lista'"
+        @click="toggleView"
+      >
+        <span class="material-symbols-outlined text-on-surface-variant">
+          {{ viewMode === 'list' ? 'grid_view' : 'view_list' }}
+        </span>
+      </button>
+    </div>
 
     <!-- Loading -->
     <div v-if="productsStore.isLoading" class="flex justify-center py-16">
@@ -41,21 +108,21 @@ function addToCart(product: { id: string; name: string; price: number }) {
       >
     </div>
 
-    <!-- Product List -->
-    <div v-else-if="productsStore.activeProducts.length > 0" class="flex flex-col gap-4">
+    <!-- List View -->
+    <div v-else-if="filteredProducts.length > 0 && viewMode === 'list'" class="flex flex-col gap-3">
       <article
-        v-for="product in productsStore.activeProducts"
+        v-for="product in filteredProducts"
         :key="product.id"
-        class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-[24px] transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.98]"
+        class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-5 transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.98]"
         role="button"
         :aria-label="`Agregar ${product.name} al carrito`"
         @click="addToCart(product)"
       >
         <!-- Thumbnail -->
         <div
-          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center"
+          class="shrink-0 w-14 h-14 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center"
         >
-          <span class="material-symbols-outlined text-on-surface-variant/50 text-[28px]"
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
             >inventory_2</span
           >
         </div>
@@ -65,22 +132,61 @@ function addToCart(product: { id: string; name: string; price: number }) {
           <h3 class="text-[16px] font-bold font-display text-on-surface truncate">
             {{ product.name }}
           </h3>
-          <p class="mt-1 text-[20px] font-bold text-surface-tint">
+          <p class="mt-0.5 text-[18px] font-bold text-surface-tint">
             ${{ formatPrice(product.price) }}
           </p>
         </div>
 
         <!-- Add to cart icon -->
         <div
-          class="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-high"
+          class="shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-surface-container-high"
         >
-          <span class="material-symbols-outlined text-on-surface">add_shopping_cart</span>
+          <span class="material-symbols-outlined text-on-surface text-[22px]"
+            >add_shopping_cart</span
+          >
         </div>
       </article>
     </div>
 
-    <!-- Empty state -->
-    <div v-else class="flex flex-col items-center justify-center py-16 gap-4">
+    <!-- Grid View -->
+    <div
+      v-else-if="filteredProducts.length > 0 && viewMode === 'grid'"
+      class="grid grid-cols-2 md:grid-cols-3 gap-3"
+    >
+      <article
+        v-for="product in filteredProducts"
+        :key="product.id"
+        class="flex flex-col items-center bg-surface-container border border-outline-variant rounded-[1rem] p-4 transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.97]"
+        role="button"
+        :aria-label="`Agregar ${product.name} al carrito`"
+        @click="addToCart(product)"
+      >
+        <!-- Thumbnail -->
+        <div
+          class="w-14 h-14 mb-3 bg-surface-container-high rounded-[0.75rem] border border-outline-variant flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-[24px]"
+            >inventory_2</span
+          >
+        </div>
+
+        <!-- Name -->
+        <h3
+          class="text-[14px] font-bold font-display text-on-surface text-center line-clamp-2 mb-1"
+        >
+          {{ product.name }}
+        </h3>
+
+        <!-- Price -->
+        <p class="text-[16px] font-bold text-surface-tint">${{ formatPrice(product.price) }}</p>
+      </article>
+    </div>
+
+    <!-- Empty state: no products at all -->
+    <div
+      v-else-if="productsStore.activeProducts.length === 0 && !searchQuery.trim()"
+      class="flex flex-col items-center justify-center py-16 gap-4"
+    >
       <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
         >storefront</span
       >
@@ -96,6 +202,19 @@ function addToCart(product: { id: string; name: string; price: number }) {
       >
         Agregar primer producto
       </RouterLink>
+    </div>
+
+    <!-- Empty state: no search results -->
+    <div
+      v-else-if="filteredProducts.length === 0 && searchQuery.trim()"
+      class="flex flex-col items-center justify-center py-16 gap-4"
+    >
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+        >search_off</span
+      >
+      <p class="text-[18px] text-on-surface-variant font-sans text-center">
+        No se encontraron productos con "{{ searchQuery }}"
+      </p>
     </div>
 
     <!-- FAB: Venta Rápida -->
