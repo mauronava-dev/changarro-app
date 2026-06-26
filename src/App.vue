@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { useSettingsStore } from '@/stores/settings'
 
 const route = useRoute()
 const cartStore = useCartStore()
+const settingsStore = useSettingsStore()
 
 const tabs = [
   { label: 'Inicio', icon: 'home', route: '/', name: 'home' },
@@ -28,7 +30,10 @@ function formatPrice(price: number): string {
     <!-- Left: Logo + Name -->
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-full bg-primary-container"></div>
-      <span class="font-display text-[28px] font-bold text-primary-fixed-dim">Changarro</span>
+      <span
+        class="font-display text-[28px] font-bold text-primary-fixed-dim truncate max-w-[160px]"
+        >{{ settingsStore.businessName }}</span
+      >
     </div>
 
     <!-- Right: Total badge + Settings icon -->

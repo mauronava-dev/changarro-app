@@ -1,8 +1,30 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 
 const settingsStore = useSettingsStore()
+
+// Editable business name
+const isEditingName = ref(false)
+const editingName = ref('')
+
+function startEditingName() {
+  editingName.value = settingsStore.businessName
+  isEditingName.value = true
+}
+
+function saveName() {
+  const trimmed = editingName.value.trim()
+  if (trimmed) {
+    settingsStore.setBusinessName(trimmed)
+  }
+  isEditingName.value = false
+}
+
+function cancelEditName() {
+  isEditingName.value = false
+}
 
 function toggleTax() {
   settingsStore.setTaxEnabled(!settingsStore.taxEnabled)
@@ -49,9 +71,42 @@ function toggleTax() {
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
       <span class="text-[18px] text-on-surface font-sans">Nombre del negocio</span>
-      <span class="text-[18px] text-on-surface-variant font-sans">{{
-        settingsStore.businessName
-      }}</span>
+
+      <!-- Editing mode -->
+      <div v-if="isEditingName" class="flex items-center gap-2">
+        <input
+          v-model="editingName"
+          type="text"
+          class="w-40 bg-surface-container-low border border-outline-variant rounded-full px-4 py-2 text-[16px] text-on-surface focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none"
+          @keyup.enter="saveName"
+          @keyup.escape="cancelEditName"
+          autofocus
+        />
+        <button
+          class="flex items-center justify-center w-9 h-9 rounded-full bg-primary-container text-on-primary-container active:scale-95"
+          aria-label="Guardar"
+          @click="saveName"
+        >
+          <span class="material-symbols-outlined text-[20px]">check</span>
+        </button>
+        <button
+          class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-surface-variant text-on-surface-variant active:scale-95"
+          aria-label="Cancelar"
+          @click="cancelEditName"
+        >
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Display mode -->
+      <button
+        v-else
+        class="flex items-center gap-2 text-[18px] text-on-surface-variant font-sans hover:text-on-surface transition-colors"
+        @click="startEditingName"
+      >
+        {{ settingsStore.businessName }}
+        <span class="material-symbols-outlined text-[18px]">edit</span>
+      </button>
     </div>
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
