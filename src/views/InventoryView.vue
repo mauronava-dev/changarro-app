@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useProductsStore } from '@/stores/products'
 
+const store = useProductsStore()
 const searchQuery = ref('')
-
-const products = ref([
-  { id: '1', name: "Playera 'Ciber-Punk' XL", price: 450.0 },
-  { id: '2', name: 'Vinyl Edición Limitada', price: 680.0 },
-  { id: '3', name: "Llavero 'Void'", price: 110.5 },
-])
 
 // Delete confirmation modal
 const showDeleteModal = ref(false)
 const productToDelete = ref<{ id: string; name: string } | null>(null)
+
+onMounted(() => {
+  store.loadProducts()
+})
 
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -23,9 +23,9 @@ function requestDelete(product: { id: string; name: string }) {
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
+async function confirmDelete() {
   if (productToDelete.value) {
-    products.value = products.value.filter((p) => p.id !== productToDelete.value!.id)
+    await store.deleteProduct(productToDelete.value.id)
   }
   cancelDelete()
 }
@@ -36,9 +36,9 @@ function cancelDelete() {
 }
 
 const filteredProducts = computed(() => {
-  if (!searchQuery.value.trim()) return products.value
+  if (!searchQuery.value.trim()) return store.products
   const query = searchQuery.value.toLowerCase()
-  return products.value.filter((p) => p.name.toLowerCase().includes(query))
+  return store.products.filter((p) => p.name.toLowerCase().includes(query))
 })
 </script>
 
@@ -80,8 +80,15 @@ const filteredProducts = computed(() => {
       />
     </div>
 
+    <!-- Loading -->
+    <div v-if="store.isLoading" class="flex justify-center py-16">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+        >progress_activity</span
+      >
+    </div>
+
     <!-- Product List -->
-    <div class="flex flex-col gap-4">
+    <div v-else-if="filteredProducts.length > 0" class="flex flex-col gap-4">
       <article
         v-for="product in filteredProducts"
         :key="product.id"
@@ -103,6 +110,9 @@ const filteredProducts = computed(() => {
           </h3>
           <p class="mt-1 text-[20px] font-bold text-surface-tint">
             ${{ formatPrice(product.price) }}
+          </p>
+          <p class="mt-0.5 text-[13px] text-on-surface-variant/60 capitalize">
+            {{ product.category }} · {{ product.unit }}
           </p>
         </div>
 
@@ -126,9 +136,25 @@ const filteredProducts = computed(() => {
       </article>
     </div>
 
-    <!-- Empty state -->
+    <!-- Empty state: no products -->
     <div
-      v-if="filteredProducts.length === 0 && searchQuery.trim()"
+      v-else-if="!searchQuery.trim() && filteredProducts.length === 0"
+      class="flex flex-col items-center justify-center py-16 gap-4"
+    >
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+        >inventory_2</span
+      >
+      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+        Tu inventario está vacío
+      </p>
+      <p class="text-[16px] text-on-surface-variant/60 text-center">
+        Agrega tu primer producto tocando el botón +
+      </p>
+    </div>
+
+    <!-- Empty state: no search results -->
+    <div
+      v-else-if="searchQuery.trim() && filteredProducts.length === 0"
       class="flex flex-col items-center justify-center py-16 gap-4"
     >
       <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"

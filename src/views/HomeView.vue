@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useProductsStore } from '@/stores/products'
 
-const products = [
-  { id: '1', name: "Playera 'Ciber-Punk' XL", price: 450.0 },
-  { id: '2', name: 'Vinyl Edición Limitada', price: 680.0 },
-  { id: '3', name: "Llavero 'Void'", price: 110.5 },
-]
+const store = useProductsStore()
+
+onMounted(() => {
+  store.loadProducts()
+})
 
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -31,10 +33,17 @@ function addToCart(productId: string) {
       </p>
     </section>
 
+    <!-- Loading -->
+    <div v-if="store.isLoading" class="flex justify-center py-16">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+        >progress_activity</span
+      >
+    </div>
+
     <!-- Product List -->
-    <div class="flex flex-col gap-4">
+    <div v-else-if="store.activeProducts.length > 0" class="flex flex-col gap-4">
       <article
-        v-for="product in products"
+        v-for="product in store.activeProducts"
         :key="product.id"
         class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-[24px] transition-all duration-200 hover:border-surface-tint cursor-pointer active:scale-[0.98]"
         role="button"
@@ -43,8 +52,12 @@ function addToCart(productId: string) {
       >
         <!-- Thumbnail -->
         <div
-          class="shrink-0 w-20 h-20 bg-surface-container-high rounded-[1rem] border border-outline-variant"
-        ></div>
+          class="shrink-0 w-16 h-16 bg-surface-container-high rounded-[1rem] border border-outline-variant flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-[28px]"
+            >inventory_2</span
+          >
+        </div>
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
@@ -63,6 +76,25 @@ function addToCart(productId: string) {
           <span class="material-symbols-outlined text-on-surface">add_shopping_cart</span>
         </div>
       </article>
+    </div>
+
+    <!-- Empty state -->
+    <div v-else class="flex flex-col items-center justify-center py-16 gap-4">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50"
+        >storefront</span
+      >
+      <p class="text-[20px] font-display font-semibold text-on-surface-variant text-center">
+        No hay productos en tu inventario
+      </p>
+      <p class="text-[16px] text-on-surface-variant/60 text-center">
+        Agrega productos desde Ajustes → Inventario
+      </p>
+      <RouterLink
+        to="/settings/inventory/new"
+        class="mt-4 px-6 py-3 bg-primary-container text-on-primary-container rounded-full text-label-md transition-all duration-200 hover:shadow-lg active:scale-95"
+      >
+        Agregar primer producto
+      </RouterLink>
     </div>
 
     <!-- FAB: Venta Rápida -->

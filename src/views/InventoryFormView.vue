@@ -1,33 +1,21 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
+import { useProductsStore } from '@/stores/products'
 
 const route = useRoute()
 const router = useRouter()
+const store = useProductsStore()
 
 const isEditing = computed(() => route.name === 'inventory-edit')
 const productId = computed(() => route.params.id as string | undefined)
 
-// Dummy products for edit mode lookup
-const dummyProducts = [
-  { id: '1', name: "Playera 'Ciber-Punk' XL", price: 450.0, category: 'PRODUCTO', unit: 'pieza' },
-  { id: '2', name: 'Vinyl Edición Limitada', price: 680.0, category: 'PRODUCTO', unit: 'pieza' },
-  { id: '3', name: "Llavero 'Void'", price: 110.5, category: 'PRODUCTO', unit: 'pieza' },
-]
-
-// Find existing product if editing
-const existingProduct = computed(() => {
-  if (isEditing.value && productId.value) {
-    return dummyProducts.find((p) => p.id === productId.value)
-  }
-  return null
-})
-
 // Form state
-const name = ref(existingProduct.value?.name ?? '')
-const price = ref(existingProduct.value?.price?.toString() ?? '')
-const selectedCategory = ref(existingProduct.value?.category ?? 'PRODUCTO')
-const selectedUnit = ref(existingProduct.value?.unit ?? 'pieza')
+const name = ref('')
+const price = ref('')
+const selectedCategory = ref('PRODUCTO')
+const selectedUnit = ref('pieza')
+const isLoadingProduct = ref(false)
 
 const categories = ['SERVICIO', 'PRODUCTO', 'OTRO']
 const units = ['pieza', 'kg', 'litro', 'paquete', 'servicio']
@@ -38,9 +26,42 @@ const isFormValid = computed(() => {
   return name.value.trim().length > 0 && parseFloat(price.value) > 0
 })
 
-function save() {
+onMounted(async () => {
+  if (isEditing.value && productId.value) {
+    isLoadingProduct.value = true
+    try {
+      const product = await store.getProductById(productId.value)
+      if (product) {
+        name.value = product.name
+        price.value = product.price.toString()
+        selectedCategory.value = product.category
+        selectedUnit.value = product.unit
+      } else {
+        // Product not found, go back
+        router.replace({ name: 'inventory' })
+      }
+    } finally {
+      isLoadingProduct.value = false
+    }
+  }
+})
+
+async function save() {
   if (!isFormValid.value) return
-  // TODO: integrate with store
+
+  const data = {
+    name: name.value.trim(),
+    price: parseFloat(price.value),
+    category: selectedCategory.value,
+    unit: selectedUnit.value,
+  }
+
+  if (isEditing.value && productId.value) {
+    await store.updateProduct(productId.value, data)
+  } else {
+    await store.createProduct(data)
+  }
+
   router.push({ name: 'inventory' })
 }
 </script>
@@ -63,8 +84,16 @@ function save() {
       </h1>
     </div>
 
+    <!-- Loading state for edit mode -->
+    <div v-if="isLoadingProduct" class="flex justify-center py-16">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 animate-spin"
+        >progress_activity</span
+      >
+    </div>
+
     <!-- Form Card -->
     <div
+      v-else
       class="bg-surface-container border border-white/5 rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-8 md:p-[48px]"
     >
       <form @submit.prevent="save" class="flex flex-col gap-8">
