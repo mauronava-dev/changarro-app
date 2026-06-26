@@ -11,6 +11,11 @@ export interface Product {
   updatedAt: string
 }
 
+export interface ProductImage {
+  productId: string
+  blob: Blob
+}
+
 export interface SaleItem {
   productId: string
   productName: string
@@ -48,13 +53,15 @@ export interface CartItemRecord {
 
 const db = new Dexie('changarro') as Dexie & {
   products: EntityTable<Product, 'id'>
+  productImages: EntityTable<ProductImage, 'productId'>
   sales: EntityTable<Sale, 'id'>
   settings: EntityTable<AppSettings, 'id'>
   cartItems: EntityTable<CartItemRecord, 'id'>
 }
 
-db.version(3).stores({
+db.version(4).stores({
   products: 'id, name, category, isActive, createdAt',
+  productImages: 'productId',
   sales: 'id, createdAt',
   settings: 'id',
   cartItems: 'id, productId',

@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { db, type Product } from '@/services/db'
+import { deleteProductImage } from '@/composables/useProductImages'
 
 export const useProductsStore = defineStore('products', () => {
   const products = ref<Product[]>([])
@@ -58,6 +59,7 @@ export const useProductsStore = defineStore('products', () => {
 
   async function deleteProduct(id: string): Promise<void> {
     await db.products.delete(id)
+    await deleteProductImage(id)
     products.value = products.value.filter((p) => p.id !== id)
   }
 
