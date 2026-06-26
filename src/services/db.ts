@@ -38,16 +38,26 @@ export interface AppSettings {
   currency: string
 }
 
+export interface CartItemRecord {
+  id: string
+  productId: string
+  productName: string
+  unitPrice: number
+  quantity: number
+}
+
 const db = new Dexie('changarro') as Dexie & {
   products: EntityTable<Product, 'id'>
   sales: EntityTable<Sale, 'id'>
   settings: EntityTable<AppSettings, 'id'>
+  cartItems: EntityTable<CartItemRecord, 'id'>
 }
 
-db.version(2).stores({
+db.version(3).stores({
   products: 'id, name, category, isActive, createdAt',
   sales: 'id, createdAt',
   settings: 'id',
+  cartItems: 'id, productId',
 })
 
 export { db }

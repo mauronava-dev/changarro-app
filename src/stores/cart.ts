@@ -1,8 +1,8 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useSettingsStore } from '@/stores/settings'
 import { useSalesStore } from '@/stores/sales'
-import type { Sale, SaleItem } from '@/services/db'
+import { db, type Sale, type SaleItem, type CartItemRecord } from '@/services/db'
 
 export interface CartItem {
   id: string
@@ -14,6 +14,7 @@ export interface CartItem {
 
 export const useCartStore = defineStore('cart', () => {
   const items = ref<CartItem[]>([])
+  const isLoaded = ref(false)
 
   const settingsStore = useSettingsStore()
 
@@ -27,6 +28,32 @@ export const useCartStore = defineStore('cart', () => {
   const taxRate = computed(() => settingsStore.taxRate)
   const tax = computed(() => (taxEnabled.value ? subtotal.value * taxRate.value : 0))
   const total = computed(() => subtotal.value + tax.value)
+
+  // Load cart from IndexedDB
+  async function loadCart() {
+    const stored = await db.cartItems.toArray()
+    items.value = stored
+    isLoaded.value = true
+  }
+
+  // Persist entire cart to IndexedDB (called on every change)
+  async function persistCart() {
+    if (!isLoaded.value) return
+    await db.cartItems.clear()
+    if (items.value.length > 0) {
+      const records: CartItemRecord[] = items.value.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        productName: item.productName,
+        unitPrice: item.unitPrice,
+        quantity: item.quantity,
+      }))
+      await db.cartItems.bulkPut(records)
+    }
+  }
+
+  // Watch for changes and persist
+  watch(items, persistCart, { deep: true })
 
   function addItem(product: { id: string; name: string; price: number }) {
     const existing = items.value.find((item) => item.productId === product.id)
@@ -104,11 +131,13 @@ export const useCartStore = defineStore('cart', () => {
   return {
     items,
     itemCount,
+    isLoaded,
     subtotal,
     taxEnabled,
     taxRate,
     tax,
     total,
+    loadCart,
     addItem,
     addCustomItem,
     incrementQuantity,
