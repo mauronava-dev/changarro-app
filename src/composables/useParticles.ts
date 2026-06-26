@@ -7,8 +7,8 @@ export function emitParticles(event: MouseEvent | TouchEvent) {
   let originY: number
 
   if ('touches' in event && event.touches.length > 0) {
-    originX = event.touches[0].clientX
-    originY = event.touches[0].clientY
+    originX = event.touches[0]!.clientX
+    originY = event.touches[0]!.clientY
   } else if ('clientX' in event) {
     originX = event.clientX
     originY = event.clientY
