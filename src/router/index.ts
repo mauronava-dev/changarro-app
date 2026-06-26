@@ -39,6 +39,18 @@ const router = createRouter({
       component: () => import('@/views/InventoryView.vue'),
       meta: { title: 'Inventario' },
     },
+    {
+      path: '/settings/inventory/new',
+      name: 'inventory-new',
+      component: () => import('@/views/InventoryFormView.vue'),
+      meta: { title: 'Nuevo Producto' },
+    },
+    {
+      path: '/settings/inventory/:id/edit',
+      name: 'inventory-edit',
+      component: () => import('@/views/InventoryFormView.vue'),
+      meta: { title: 'Editar Producto' },
+    },
   ],
 })
 
