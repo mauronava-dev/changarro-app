@@ -10,17 +10,17 @@ y contribuir a su desarrollo.
 
 ## Contenido
 
-| # | Documento | Descripción |
-|---|-----------|-------------|
-| 01 | [Visión](./01-vision.md) | Hacia dónde va este proyecto |
-| 02 | [Misión](./02-mision.md) | Para qué existe y a quién sirve |
+| #   | Documento                | Descripción                     |
+| --- | ------------------------ | ------------------------------- |
+| 01  | [Visión](./01-vision.md) | Hacia dónde va este proyecto    |
+| 02  | [Misión](./02-mision.md) | Para qué existe y a quién sirve |
 
 ### Subcarpetas
 
-| Sección | Descripción |
-|---------|-------------|
+| Sección                                             | Descripción                                        |
+| --------------------------------------------------- | -------------------------------------------------- |
 | [Manuales de usuario](./manuales-usuario/README.md) | Guías para usar Changarro sin conocimiento técnico |
-| [Manuales técnicos](./manuales-tecnicos/README.md) | Guías para desarrolladores y colaboradores |
+| [Manuales técnicos](./manuales-tecnicos/README.md)  | Guías para desarrolladores y colaboradores         |
 
 ---
 

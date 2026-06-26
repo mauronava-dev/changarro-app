@@ -9,10 +9,11 @@ aplicación para gestionar las ventas de su negocio.
 
 ## Contenido
 
-| # | Documento | Descripción |
-|---|-----------|-------------|
-| 01 | [Introducción](./01-introduccion.md) | Qué es Changarro y qué puedes hacer con él |
-| 02 | [Primeros pasos](./02-primeros-pasos.md) | Cómo instalar y empezar a usar |
+| #   | Documento                                | Descripción                                |
+| --- | ---------------------------------------- | ------------------------------------------ |
+| 01  | [Introducción](./01-introduccion.md)     | Qué es Changarro y qué puedes hacer con él |
+| 02  | [Primeros pasos](./02-primeros-pasos.md) | Cómo instalar y empezar a usar             |
+| 03  | [Navegación](./03-navegacion.md)         | Cómo moverte dentro de la aplicación       |
 
 ---
 
