@@ -178,9 +178,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    /* Respect system bars on Android */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Extend background under system bars when edge-to-edge is active */
+    min-height: 100dvh;
   }
 
   /* Material Symbols icon configuration */

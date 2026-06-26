@@ -25,7 +25,8 @@ function formatPrice(price: number): string {
 <template>
   <!-- TopAppBar -->
   <header
-    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 px-5 bg-surface-container/80 backdrop-blur-lg border-b border-outline-variant"
+    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 px-5 pt-[env(safe-area-inset-top)] bg-surface-container/80 backdrop-blur-lg border-b border-outline-variant"
+    style="padding-top: env(safe-area-inset-top)"
   >
     <!-- Left: Logo + Name -->
     <div class="flex items-center gap-3">
@@ -62,6 +63,7 @@ function formatPrice(price: number): string {
   <!-- Bottom Navigation -->
   <nav
     class="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 py-3 bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-variant shadow-nav"
+    style="padding-bottom: env(safe-area-inset-bottom)"
   >
     <RouterLink
       v-for="tab in tabs"
