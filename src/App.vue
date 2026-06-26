@@ -32,7 +32,7 @@ function formatPrice(price: number): string {
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-full bg-primary-container"></div>
       <span
-        class="font-display text-[28px] font-bold text-primary-fixed-dim truncate max-w-[160px]"
+        class="font-display text-[22px] font-bold text-primary-fixed-dim truncate max-w-[160px]"
         >{{ settingsStore.businessName }}</span
       >
     </div>
