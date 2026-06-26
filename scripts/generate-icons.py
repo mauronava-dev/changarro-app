@@ -151,6 +151,23 @@ def main() -> None:
         resized.save(str(output_round), format="PNG")
         print(f"  ✓ {folder}/ic_launcher.png ({size}x{size})")
 
+    # Copy to Android gen resources if they exist
+    android_res_dir = project_root / "src-tauri" / "gen" / "android" / "app" / "src" / "main" / "res"
+    if android_res_dir.exists():
+        print()
+        print("Copiando al proyecto Android generado...")
+        for folder, size in android_sizes.items():
+            res_folder = android_res_dir / folder
+            if res_folder.exists():
+                source = android_dir / folder / "ic_launcher.png"
+                (res_folder / "ic_launcher.png").write_bytes(source.read_bytes())
+                (res_folder / "ic_launcher_foreground.png").write_bytes(source.read_bytes())
+                (res_folder / "ic_launcher_round.png").write_bytes(source.read_bytes())
+                print(f"  ✓ res/{folder}/")
+    else:
+        print()
+        print("  ⚠ src-tauri/gen/android no existe aún. Ejecuta 'npx tauri android init' y vuelve a correr este script.")
+
     print()
     print("¡Listo! Todos los íconos fueron generados.")
 
