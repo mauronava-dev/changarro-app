@@ -26,6 +26,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
+# Configurar JAVA_HOME para usar Java 21 (requerido por Capacitor 6+) si está disponible en macOS
+if [ -x "/usr/libexec/java_home" ]; then
+    JAVA_21_HOME=$(/usr/libexec/java_home -v 21 2>/dev/null || true)
+    if [ -n "$JAVA_21_HOME" ]; then
+        echo -e "${YELLOW}▶ Configurando JAVA_HOME para usar Java 21: $JAVA_21_HOME${NC}"
+        export JAVA_HOME="$JAVA_21_HOME"
+    fi
+fi
+
 # Verificar que existe la carpeta android
 if [ ! -d "android" ]; then
     echo -e "${RED}Error: No se encontró la carpeta nativa 'android'. Ejecuta 'npx cap add android' primero.${NC}"
