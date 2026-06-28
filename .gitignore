@@ -49,3 +49,11 @@ src-tauri/Cargo.lock
 **.keystore
 
 **.apk**
+
+# Capacitor / Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json

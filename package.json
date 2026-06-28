@@ -13,12 +13,16 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:run": "npm run build && npx cap run android",
+    "cap:open": "npx cap open android",
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@capacitor/core": "^8.4.1",
     "@tailwindcss/vite": "^4.3.1",
     "dexie": "^4.4.4",
     "pinia": "^3.0.4",
@@ -27,6 +31,8 @@
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
     "@tauri-apps/cli": "^2.11.3",
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^28.0.3",
