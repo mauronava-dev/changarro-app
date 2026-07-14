@@ -4,6 +4,9 @@ import { RouterLink } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import packageJson from '../../package.json'
 import { exportDatabase, importDatabaseMerge } from '@/services/backup'
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
 
 const settingsStore = useSettingsStore()
 
@@ -68,20 +71,40 @@ async function handleExport() {
   exporting.value = true
   try {
     const jsonStr = await exportDatabase()
-    const blob = new Blob([jsonStr], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
     
     // Auto naming: prefix + clean business name + date
     const dateStr = new Date().toISOString().split('T')[0]!
     const cleanName = settingsStore.businessName.toLowerCase().replace(/[^a-z0-9]/g, '_')
-    a.download = `changarro_respaldo_${cleanName}_${dateStr}.json`
+    const fileName = `changarro_respaldo_${cleanName}_${dateStr}.json`
     
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    if (Capacitor.isNativePlatform()) {
+      // Escribir archivo temporal en el directorio de caché
+      const writeResult = await Filesystem.writeFile({
+        path: fileName,
+        data: jsonStr,
+        directory: Directory.Cache,
+        encoding: Encoding.UTF8
+      })
+
+      // Compartir con el menú nativo del dispositivo
+      await Share.share({
+        title: 'Respaldo Changarro',
+        url: writeResult.uri,
+        dialogTitle: 'Guardar respaldo de Changarro'
+      })
+    } else {
+      // Descarga clásica en navegador
+      const blob = new Blob([jsonStr], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fileName
+      
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
     
     showExportModal.value = false
   } catch (error) {
