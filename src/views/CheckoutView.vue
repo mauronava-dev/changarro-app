@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
@@ -8,12 +8,28 @@ const cartStore = useCartStore()
 
 const cashReceived = ref('')
 const isSubmitting = ref(false)
+const countdown = ref(3)
+let timerId: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
   // If the cart is empty, go back to the cart view
   if (cartStore.items.length === 0) {
     router.replace('/cart')
+    return
   }
+
+  // Start the 3-second countdown to prevent accidental double clicks
+  timerId = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--
+    } else {
+      if (timerId) clearInterval(timerId)
+    }
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (timerId) clearInterval(timerId)
 })
 
 const total = computed(() => cartStore.total)
@@ -41,8 +57,8 @@ const isValid = computed(() => {
   return cashAmount.value >= total.value
 })
 
-// Quick cash bill suggestions (common in Mexico/Latin America)
-const denominations = [20, 50, 100, 200, 500, 1000]
+// Quick cash bill suggestions (Mexico/Latin America standard: 50, 100, 200, 500)
+const denominations = [50, 100, 200, 500]
 
 const suggestedDenominations = computed(() => {
   // Only suggest bills that are greater than or equal to the total
@@ -61,8 +77,18 @@ function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+const isButtonDisabled = computed(() => {
+  return !isValid.value || countdown.value > 0 || isSubmitting.value
+})
+
+const buttonText = computed(() => {
+  if (isSubmitting.value) return 'Cobrando...'
+  if (countdown.value > 0) return `Cobrar (${countdown.value})`
+  return 'Cobrar'
+})
+
 async function handleConfirmSale() {
-  if (!isValid.value || isSubmitting.value) return
+  if (isButtonDisabled.value || isSubmitting.value) return
   isSubmitting.value = true
   try {
     await cartStore.finalizeSale()
@@ -142,7 +168,7 @@ async function handleConfirmSale() {
         <div class="flex flex-wrap gap-2.5">
           <!-- Exact payment button -->
           <button
-            class="px-5 py-3 rounded-full border border-outline-variant text-[14px] font-semibold text-on-surface bg-surface-container-high transition-all active:scale-95 hover:border-surface-tint"
+            class="px-5 py-3 rounded-full border border-primary-container text-[14px] font-bold text-on-primary-container bg-primary-container transition-all active:scale-95 hover:shadow-lg"
             @click="setExactPayment"
           >
             Exacto
@@ -184,11 +210,11 @@ async function handleConfirmSale() {
     <div class="fixed bottom-20 left-0 right-0 z-40 mx-4">
       <button
         class="w-full py-5 bg-surface-tint text-on-primary rounded-full text-[19px] font-bold flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100"
-        :disabled="!isValid || isSubmitting"
+        :disabled="isButtonDisabled"
         @click="handleConfirmSale"
       >
         <span class="material-symbols-outlined text-[19px]">check_circle</span>
-        {{ isSubmitting ? 'Registrando...' : 'Registrar Venta' }}
+        {{ buttonText }}
       </button>
     </div>
   </div>
