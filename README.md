@@ -13,7 +13,7 @@ de sus ventas sin depender de internet ni pagar suscripciones.
 [![Versión](https://img.shields.io/badge/versión-0.5.0-c5c5d8?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
 [![Plataforma](https://img.shields.io/badge/plataforma-Android%20%7C%20Windows%20%7C%20macOS-4ade80?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
 [![Sin internet](https://img.shields.io/badge/funciona-sin%20internet-c5c5d8?style=flat-square&labelColor=20201f)](#)
-[![Licencia](https://img.shields.io/badge/licencia-MIT-c5c5d8?style=flat-square&labelColor=20201f)](./LICENSE)
+[![Licencia](https://img.shields.io/badge/licencia-PolyForm%20NC-c5c5d8?style=flat-square&labelColor=20201f)](./LICENSE)
 [![Hecho con ❤️ por Bendito Código](https://img.shields.io/badge/hecho%20con%20❤️%20por-Bendito%20Código-c5c5d8?style=flat-square&labelColor=20201f)](https://benditocodigo.com)
 
 </div>
@@ -159,10 +159,16 @@ Changarro es un proyecto de código abierto hecho con cariño por [Bendito Códi
 
 ## 📄 Licencia
 
-Changarro es software libre distribuido bajo la licencia **MIT**.
-Puedes usarlo, modificarlo y distribuirlo libremente, incluso para fines comerciales.
+Changarro se distribuye bajo la licencia **PolyForm Noncommercial License 1.0.0**.
 
-Consulta el archivo [LICENSE](./LICENSE) para más detalles.
+Esto significa que puedes:
+- ✅ Usarlo libremente para tu negocio o de forma personal
+- ✅ Modificarlo y adaptarlo a tus necesidades
+- ✅ Compartirlo con otras personas
+- ❌ No puedes comercializarlo ni venderlo como producto propio
+
+Consulta el archivo [LICENSE](./LICENSE) para los términos completos.
+© 2026 Mauro Nava Luevanos — [benditocodigo.com](https://benditocodigo.com)
 
 ---
 
