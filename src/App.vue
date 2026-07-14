@@ -68,8 +68,8 @@ function formatPrice(price: number): string {
 
   <!-- Bottom Navigation -->
   <nav
-    class="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 py-3 bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-variant shadow-nav"
-    style="padding-bottom: env(safe-area-inset-bottom)"
+    class="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 pt-4 pb-5 bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-variant shadow-nav"
+    style="padding-bottom: calc(16px + env(safe-area-inset-bottom))"
   >
     <RouterLink
       v-for="tab in tabs"
