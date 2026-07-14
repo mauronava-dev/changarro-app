@@ -32,6 +32,10 @@ function toggleTax() {
   settingsStore.setTaxEnabled(!settingsStore.taxEnabled)
 }
 
+function toggleShifts() {
+  settingsStore.setShiftsEnabled(!settingsStore.shiftsEnabled)
+}
+
 // Backup & Restore state
 const showExportModal = ref(false)
 const showImportModal = ref(false)
@@ -233,6 +237,34 @@ function handleImport(event: Event) {
       <span class="text-[15px] text-on-surface-variant font-sans"
         >{{ Math.round(settingsStore.taxRate * 100) }}%</span
       >
+    </div>
+
+    <!-- TURNOS Section -->
+    <h2
+      class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display mt-8 mb-4"
+    >
+      Turnos de caja
+    </h2>
+
+    <div class="flex justify-between items-center py-4 border-b border-outline-variant">
+      <div class="flex-1 pr-4">
+        <div class="text-[15px] text-on-surface font-sans">Habilitar turnos</div>
+        <div class="text-[13px] text-on-surface-variant/60 font-sans mt-1 leading-relaxed">
+          Registra las ventas por turno de caja. Al cerrar un turno verás el resumen de efectivo y podrás comenzar uno nuevo.
+        </div>
+      </div>
+      <!-- Toggle -->
+      <button
+        class="shrink-0 relative w-12 h-6 rounded-full transition-colors duration-200"
+        :class="settingsStore.shiftsEnabled ? 'bg-primary-fixed-dim' : 'bg-surface-container-highest'"
+        aria-label="Habilitar turnos"
+        @click="toggleShifts"
+      >
+        <span
+          class="absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200"
+          :class="settingsStore.shiftsEnabled ? 'translate-x-6' : 'translate-x-0.5'"
+        ></span>
+      </button>
     </div>
 
     <!-- DATOS Section -->

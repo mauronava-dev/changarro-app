@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   taxRate: 0.16,
   businessName: 'Mi Changarro',
   currency: 'MXN',
+  shiftsEnabled: false,
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -15,6 +16,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const taxRate = ref(DEFAULT_SETTINGS.taxRate)
   const businessName = ref(DEFAULT_SETTINGS.businessName)
   const currency = ref(DEFAULT_SETTINGS.currency)
+  const shiftsEnabled = ref(DEFAULT_SETTINGS.shiftsEnabled)
   const isLoaded = ref(false)
 
   async function loadSettings() {
@@ -24,6 +26,7 @@ export const useSettingsStore = defineStore('settings', () => {
       taxRate.value = stored.taxRate
       businessName.value = stored.businessName
       currency.value = stored.currency
+      shiftsEnabled.value = stored.shiftsEnabled ?? false
     } else {
       await db.settings.put(DEFAULT_SETTINGS)
     }
@@ -45,6 +48,31 @@ export const useSettingsStore = defineStore('settings', () => {
     await persist()
   }
 
+  async function setShiftsEnabled(value: boolean) {
+    shiftsEnabled.value = value
+    await persist()
+
+    // Lazy import to avoid circular dependency
+    const { useShiftsStore } = await import('@/stores/shifts')
+    const shiftsStore = useShiftsStore()
+
+    if (value) {
+      // Open first shift if there's no active one
+      await shiftsStore.loadActiveShift()
+      if (!shiftsStore.activeShift) {
+        await shiftsStore.openShift()
+      }
+    } else {
+      // Close current shift silently without requiring user confirmation
+      if (shiftsStore.activeShift) {
+        const shiftId = shiftsStore.activeShift.id
+        const sales = await shiftsStore.getShiftSales(shiftId)
+        const totalCash = sales.reduce((sum, s) => sum + s.total, 0)
+        await shiftsStore.closeShift(totalCash, sales.length)
+      }
+    }
+  }
+
   async function persist() {
     await db.settings.put({
       id: 'app-settings',
@@ -52,6 +80,7 @@ export const useSettingsStore = defineStore('settings', () => {
       taxRate: taxRate.value,
       businessName: businessName.value,
       currency: currency.value,
+      shiftsEnabled: shiftsEnabled.value,
     })
   }
 
@@ -60,10 +89,12 @@ export const useSettingsStore = defineStore('settings', () => {
     taxRate,
     businessName,
     currency,
+    shiftsEnabled,
     isLoaded,
     loadSettings,
     setTaxEnabled,
     setTaxRate,
     setBusinessName,
+    setShiftsEnabled,
   }
 })

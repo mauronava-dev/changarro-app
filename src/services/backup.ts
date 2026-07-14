@@ -38,6 +38,7 @@ export interface BackupData {
   images: Array<{ productId: string; base64: string; type: string }>
   sales: any[]
   cartItems: any[]
+  shifts: any[]
 }
 
 /**
@@ -70,6 +71,7 @@ export async function exportDatabase(): Promise<string> {
     images,
     sales,
     cartItems,
+    shifts: await db.shifts.toArray(),
   }
 
   return JSON.stringify(backup)
@@ -88,7 +90,7 @@ export async function importDatabaseMerge(backupJson: string): Promise<void> {
     throw new Error('El archivo no contiene un formato de respaldo válido de Changarro.')
   }
 
-  await db.transaction('rw', [db.products, db.productImages, db.sales, db.settings, db.cartItems], async () => {
+  await db.transaction('rw', [db.products, db.productImages, db.sales, db.settings, db.cartItems, db.shifts], async () => {
     // Merge settings
     if (Array.isArray(backupData.settings)) {
       for (const s of backupData.settings) {
@@ -121,6 +123,13 @@ export async function importDatabaseMerge(backupJson: string): Promise<void> {
     if (Array.isArray(backupData.cartItems)) {
       for (const item of backupData.cartItems) {
         await db.cartItems.put(item)
+      }
+    }
+
+    // Merge shifts
+    if (Array.isArray(backupData.shifts)) {
+      for (const shift of backupData.shifts) {
+        await db.shifts.put(shift)
       }
     }
   })

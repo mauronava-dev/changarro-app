@@ -102,6 +102,8 @@ export const useCartStore = defineStore('cart', () => {
 
   async function finalizeSale(receivedAmount?: number, changeAmount?: number): Promise<Sale> {
     const salesStore = useSalesStore()
+    const { useShiftsStore } = await import('@/stores/shifts')
+    const shiftsStore = useShiftsStore()
 
     const saleItems: SaleItem[] = items.value.map((item) => ({
       productId: item.productId,
@@ -121,6 +123,10 @@ export const useCartStore = defineStore('cart', () => {
       total: total.value,
       receivedAmount,
       changeAmount,
+      // Assign to active shift only when shifts are enabled and one is open
+      ...(settingsStore.shiftsEnabled && shiftsStore.activeShift
+        ? { shiftId: shiftsStore.activeShift.id }
+        : {}),
       createdAt: new Date().toISOString(),
     }
 

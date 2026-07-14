@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, computed, watchEffect, onMounted, onUnmounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 import { db, type Sale } from '@/services/db'
+import { useSettingsStore } from '@/stores/settings'
+import { useShiftsStore } from '@/stores/shifts'
+
+const router = useRouter()
+const settingsStore = useSettingsStore()
+const shiftsStore = useShiftsStore()
 
 // ─── Filter state ────────────────────────────────────────────────────────────
 const activeFilter = ref<'Turno' | 'Hoy' | 'Mes'>('Hoy')
 const selectedMonth = ref('')
 const showMonthSelector = ref(false)
+const showShiftMenu = ref(false)
 const isLoading = ref(false)
 
 // ─── Filtered results (fetched directly from IndexedDB) ──────────────────────
@@ -37,20 +44,29 @@ function monthRange(yyyyMM: string): { lower: string; upper: string } {
 async function fetchSalesForFilter() {
   isLoading.value = true
   try {
-    let range: { lower: string; upper: string }
-
-    if (activeFilter.value === 'Turno' || activeFilter.value === 'Hoy') {
-      range = todayRange()
+    if (activeFilter.value === 'Turno' && settingsStore.shiftsEnabled && shiftsStore.activeShift) {
+      // Query by shiftId index — most targeted possible query
+      filteredSales.value = await db.sales
+        .where('shiftId')
+        .equals(shiftsStore.activeShift.id)
+        .reverse()
+        .sortBy('createdAt')
+    } else if (activeFilter.value === 'Mes') {
+      const range = monthRange(selectedMonth.value)
+      filteredSales.value = await db.sales
+        .where('createdAt')
+        .between(range.lower, range.upper, true, true)
+        .reverse()
+        .toArray()
     } else {
-      range = monthRange(selectedMonth.value)
+      // 'Hoy' or 'Turno' when shifts disabled: filter by today
+      const range = todayRange()
+      filteredSales.value = await db.sales
+        .where('createdAt')
+        .between(range.lower, range.upper, true, true)
+        .reverse()
+        .toArray()
     }
-
-    // Uses the createdAt B-tree index — only reads matching rows from disk
-    filteredSales.value = await db.sales
-      .where('createdAt')
-      .between(range.lower, range.upper, true, true)
-      .reverse()
-      .toArray()
   } finally {
     isLoading.value = false
   }
@@ -58,13 +74,13 @@ async function fetchSalesForFilter() {
 
 // ─── Reactively re-fetch when filter changes ──────────────────────────────────
 watchEffect(() => {
-  // Access reactive deps so watchEffect tracks them
   void activeFilter.value
   void selectedMonth.value
+  void shiftsStore.activeShift
   fetchSalesForFilter()
 })
 
-// ─── Load oldest sale date for the month selector ─────────────────────────────
+// ─── Load oldest sale date for month selector ─────────────────────────────────
 async function loadOldestSaleDate() {
   const oldest = await db.sales.orderBy('createdAt').first()
   firstSaleDate.value = oldest ? new Date(oldest.createdAt) : new Date()
@@ -77,6 +93,18 @@ selectedMonth.value = `${today.getFullYear()}-${String(today.getMonth() + 1).pad
 onMounted(async () => {
   await loadOldestSaleDate()
 })
+
+// ─── Close dropdowns on outside click ────────────────────────────────────────
+function handleOutsideClick(e: Event) {
+  const target = e.target as HTMLElement
+  if (!target.closest('[data-dropdown]')) {
+    showMonthSelector.value = false
+    showShiftMenu.value = false
+  }
+}
+
+onMounted(() => document.addEventListener('click', handleOutsideClick))
+onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 
 // ─── Month selector ───────────────────────────────────────────────────────────
 const availableMonths = computed(() => {
@@ -136,11 +164,17 @@ function selectFilter(filter: 'Turno' | 'Hoy' | 'Mes') {
     activeFilter.value = filter
     showMonthSelector.value = false
   }
+  showShiftMenu.value = false
 }
 
 function selectMonth(value: string) {
   selectedMonth.value = value
   showMonthSelector.value = false
+}
+
+function goToShiftClose() {
+  showShiftMenu.value = false
+  router.push('/shift-close')
 }
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -169,66 +203,124 @@ function formatTime(iso: string): string {
         Ventas
       </h1>
 
-      <!-- Filter Buttons -->
-      <div class="flex items-center gap-2 self-end relative">
-        <button
-          v-for="filter in (['Turno', 'Hoy'] as const)"
-          :key="filter"
-          :class="[
-            'px-5 py-2 rounded-full text-label-md transition-all active:scale-95',
-            activeFilter === filter
-              ? 'bg-primary-container text-on-primary-container font-bold shadow-sm'
-              : 'border border-outline-variant text-on-surface-variant hover:bg-surface-variant'
-          ]"
-          @click="selectFilter(filter)"
-        >
-          {{ filter }}
-        </button>
+      <!-- Filter Buttons + Shift Menu -->
+      <div class="flex items-center gap-2 self-end">
 
-        <!-- Mes button + dropdown -->
-        <div class="relative">
+        <!-- Date filters -->
+        <div class="flex items-center gap-2">
+          <!-- Turno filter: only visible when shifts enabled -->
           <button
+            v-if="settingsStore.shiftsEnabled"
             :class="[
-              'flex items-center gap-1.5 px-5 py-2 rounded-full text-label-md transition-all active:scale-95',
-              activeFilter === 'Mes'
+              'px-5 py-2 rounded-full text-label-md transition-all active:scale-95',
+              activeFilter === 'Turno'
                 ? 'bg-primary-container text-on-primary-container font-bold shadow-sm'
                 : 'border border-outline-variant text-on-surface-variant hover:bg-surface-variant'
             ]"
-            @click="selectFilter('Mes')"
+            @click="selectFilter('Turno')"
           >
-            <span>{{ selectedMonthLabel }}</span>
-            <span
-              class="material-symbols-outlined text-[16px] transition-transform duration-200"
-              :class="{ 'rotate-180': showMonthSelector }"
-            >
-              keyboard_arrow_down
-            </span>
+            Turno
           </button>
 
-          <!-- Month Selector Dropdown -->
+          <button
+            :class="[
+              'px-5 py-2 rounded-full text-label-md transition-all active:scale-95',
+              activeFilter === 'Hoy'
+                ? 'bg-primary-container text-on-primary-container font-bold shadow-sm'
+                : 'border border-outline-variant text-on-surface-variant hover:bg-surface-variant'
+            ]"
+            @click="selectFilter('Hoy')"
+          >
+            Hoy
+          </button>
+
+          <!-- Mes button + dropdown -->
+          <div class="relative" data-dropdown>
+            <button
+              :class="[
+                'flex items-center gap-1.5 px-5 py-2 rounded-full text-label-md transition-all active:scale-95',
+                activeFilter === 'Mes'
+                  ? 'bg-primary-container text-on-primary-container font-bold shadow-sm'
+                  : 'border border-outline-variant text-on-surface-variant hover:bg-surface-variant'
+              ]"
+              @click="selectFilter('Mes')"
+            >
+              <span>{{ selectedMonthLabel }}</span>
+              <span
+                class="material-symbols-outlined text-[16px] transition-transform duration-200"
+                :class="{ 'rotate-180': showMonthSelector }"
+              >
+                keyboard_arrow_down
+              </span>
+            </button>
+
+            <!-- Month Selector Dropdown -->
+            <Transition name="fade-scale">
+              <div
+                v-if="showMonthSelector && activeFilter === 'Mes'"
+                class="absolute right-0 top-full mt-2 z-50 bg-surface-container-high border border-outline-variant rounded-2xl p-3 shadow-[0_12px_32px_rgba(0,0,0,0.5)] w-56 max-h-64 overflow-y-auto"
+              >
+                <div class="flex flex-col gap-1">
+                  <button
+                    v-for="month in availableMonths"
+                    :key="month.value"
+                    :class="[
+                      'w-full text-left px-4 py-2.5 rounded-xl text-[14px] font-sans transition-all active:scale-98',
+                      selectedMonth === month.value
+                        ? 'bg-primary-container/10 text-surface-tint font-bold'
+                        : 'text-on-surface hover:bg-surface-variant'
+                    ]"
+                    @click="selectMonth(month.value)"
+                  >
+                    {{ month.label }}
+                  </button>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
+
+        <!-- Shift Menu button: only when shifts enabled -->
+        <div v-if="settingsStore.shiftsEnabled" class="relative" data-dropdown>
+          <button
+            class="flex items-center justify-center w-9 h-9 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-all active:scale-95"
+            aria-label="Opciones de turno"
+            @click.stop="showShiftMenu = !showShiftMenu"
+          >
+            <span class="material-symbols-outlined text-[20px]">more_vert</span>
+          </button>
+
+          <!-- Shift Dropdown -->
           <Transition name="fade-scale">
             <div
-              v-if="showMonthSelector && activeFilter === 'Mes'"
-              class="absolute right-0 top-full mt-2 z-50 bg-surface-container-high border border-outline-variant rounded-2xl p-3 shadow-[0_12px_32px_rgba(0,0,0,0.5)] w-56 max-h-64 overflow-y-auto"
+              v-if="showShiftMenu"
+              class="absolute right-0 top-full mt-2 z-50 bg-surface-container-high border border-outline-variant rounded-2xl p-2 shadow-[0_12px_32px_rgba(0,0,0,0.5)] w-52"
             >
-              <div class="flex flex-col gap-1">
-                <button
-                  v-for="month in availableMonths"
-                  :key="month.value"
-                  :class="[
-                    'w-full text-left px-4 py-2.5 rounded-xl text-[14px] font-sans transition-all active:scale-98',
-                    selectedMonth === month.value
-                      ? 'bg-primary-container/10 text-surface-tint font-bold'
-                      : 'text-on-surface hover:bg-surface-variant'
-                  ]"
-                  @click="selectMonth(month.value)"
-                >
-                  {{ month.label }}
-                </button>
-              </div>
+              <button
+                :class="[
+                  'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-sans transition-all active:scale-95 text-left',
+                  shiftsStore.activeShift
+                    ? 'text-on-surface hover:bg-surface-variant'
+                    : 'text-on-surface-variant/40 cursor-not-allowed'
+                ]"
+                :disabled="!shiftsStore.activeShift"
+                @click="goToShiftClose"
+              >
+                <span class="material-symbols-outlined text-[18px]">lock_clock</span>
+                <div>
+                  <div class="font-medium">Cerrar turno</div>
+                  <div v-if="!shiftsStore.activeShift" class="text-[11px] text-on-surface-variant/40">
+                    No hay turno activo
+                  </div>
+                  <div v-else class="text-[11px] text-on-surface-variant/60">
+                    Turno #{{ shiftsStore.activeShift.id }}
+                  </div>
+                </div>
+              </button>
             </div>
           </Transition>
         </div>
+
       </div>
     </div>
 

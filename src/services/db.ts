@@ -34,7 +34,16 @@ export interface Sale {
   total: number
   receivedAmount?: number
   changeAmount?: number
+  shiftId?: number          // optional: assigned only when shifts are enabled
   createdAt: string
+}
+
+export interface Shift {
+  id: number                // incremental: 1, 2, 3...
+  startedAt: string         // ISO 8601
+  closedAt?: string         // ISO 8601 — undefined means active
+  totalCash: number         // sum of sale totals in this shift
+  salesCount: number        // number of sales in this shift
 }
 
 export interface AppSettings {
@@ -43,6 +52,7 @@ export interface AppSettings {
   taxRate: number
   businessName: string
   currency: string
+  shiftsEnabled: boolean
 }
 
 export interface CartItemRecord {
@@ -59,6 +69,7 @@ const db = new Dexie('changarro') as Dexie & {
   sales: EntityTable<Sale, 'id'>
   settings: EntityTable<AppSettings, 'id'>
   cartItems: EntityTable<CartItemRecord, 'id'>
+  shifts: EntityTable<Shift, 'id'>
 }
 
 db.version(4).stores({
@@ -67,6 +78,15 @@ db.version(4).stores({
   sales: 'id, createdAt',
   settings: 'id',
   cartItems: 'id, productId',
+})
+
+db.version(5).stores({
+  products: 'id, name, category, isActive, createdAt',
+  productImages: 'productId',
+  sales: 'id, createdAt, shiftId',
+  settings: 'id',
+  cartItems: 'id, productId',
+  shifts: 'id, startedAt, closedAt',
 })
 
 export { db }

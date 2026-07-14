@@ -63,6 +63,12 @@ const router = createRouter({
       component: () => import('@/views/InventoryFormView.vue'),
       meta: { title: 'Editar Producto' },
     },
+    {
+      path: '/shift-close',
+      name: 'shift-close',
+      component: () => import('@/views/ShiftCloseView.vue'),
+      meta: { title: 'Cierre de Turno' },
+    },
   ],
 })
 
