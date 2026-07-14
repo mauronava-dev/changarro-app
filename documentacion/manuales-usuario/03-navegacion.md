@@ -78,6 +78,8 @@ Aquí puedes:
 - Configurar la moneda
 - Activar o desactivar el cálculo de IVA
 - Acceder al **Inventario** para gestionar tus productos
+- **Respaldar datos (Exportar)**: descarga una copia de seguridad en un archivo `.json` que contiene tu catálogo de productos (incluyendo imágenes), tus ventas completadas y la configuración del negocio.
+- **Restaurar respaldo (Importar)**: selecciona un archivo de respaldo `.json` para combinarlo con tus datos actuales. Los registros del archivo se agregarán o actualizarán de forma segura sin borrar tu inventario o historial actual.
 
 ### Inventario
 

@@ -18,7 +18,8 @@ src/
 ├── router/
 │   └── index.ts           ← Definición de rutas
 ├── services/
-│   └── db.ts              ← Capa de persistencia (Dexie.js)
+│   ├── db.ts              ← Capa de persistencia (Dexie.js)
+│   └── backup.ts          ← Servicio de respaldo e importación (combinación JSON)
 ├── stores/
 │   ├── products.ts        ← Catálogo de productos
 │   ├── cart.ts            ← Carrito de venta actual
@@ -89,6 +90,13 @@ La base de datos se llama `changarro` y tiene cuatro tablas:
 - `cartItems` — índices: id, productId
 
 Los stores importan `db` directamente y ejecutan operaciones CRUD sobre las tablas.
+
+### backup.ts
+
+Servicio encargado de la exportación e importación (migración y copias de seguridad) de la base de datos en formato JSON.
+
+- **Exportación**: Lee todos los registros de IndexedDB, codifica las imágenes binarias `Blob` de productos a Base64 y empaqueta la información en un archivo JSON descargable.
+- **Importación con Combinación (Merge)**: Lee el archivo JSON seleccionado y realiza una combinación transaccional mediante el método `.put()` de Dexie. Inserta nuevos registros e incrementa/actualiza los existentes sin borrar ningún dato que el usuario tenga actualmente en su base de datos local.
 
 ---
 
