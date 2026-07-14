@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
 import { useProductImages } from '@/composables/useProductImages'
+import { searchItems } from '@/utils/search'
 
 const store = useProductsStore()
 const { imageUrls, loadImages } = useProductImages()
@@ -49,9 +50,7 @@ function cancelDelete() {
 }
 
 const filteredProducts = computed(() => {
-  if (!searchQuery.value.trim()) return store.products
-  const query = searchQuery.value.toLowerCase()
-  return store.products.filter((p) => p.name.toLowerCase().includes(query))
+  return searchItems(store.products, searchQuery.value, ['name', 'category'])
 })
 </script>
 

@@ -5,6 +5,7 @@ import { useProductsStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
 import { useProductImages } from '@/composables/useProductImages'
 import { emitParticles } from '@/composables/useParticles'
+import { searchItems } from '@/utils/search'
 
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
@@ -28,22 +29,8 @@ watch(
   { immediate: true },
 )
 
-/**
- * Normalize a string for accent/diacritic-insensitive search.
- * Removes accents, dieresis, ñ → n, etc.
- */
-function normalize(str: string): string {
-  return str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-}
-
 const filteredProducts = computed(() => {
-  const products = productsStore.activeProducts
-  const query = normalize(searchQuery.value.trim())
-  if (!query) return products
-  return products.filter((p) => normalize(p.name).includes(query))
+  return searchItems(productsStore.activeProducts, searchQuery.value, ['name', 'category'])
 })
 
 function formatPrice(price: number): string {
