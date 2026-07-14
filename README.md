@@ -14,7 +14,7 @@ de sus ventas sin depender de internet ni pagar suscripciones.
 [![Plataforma](https://img.shields.io/badge/plataforma-Android%20%7C%20Windows%20%7C%20macOS-4ade80?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
 [![Sin internet](https://img.shields.io/badge/funciona-sin%20internet-c5c5d8?style=flat-square&labelColor=20201f)](#)
 [![Licencia](https://img.shields.io/badge/licencia-PolyForm%20NC-c5c5d8?style=flat-square&labelColor=20201f)](./LICENSE)
-[![Hecho con ❤️ por Bendito Código](https://img.shields.io/badge/hecho%20con%20❤️%20por-Bendito%20Código-c5c5d8?style=flat-square&labelColor=20201f)](https://benditocodigo.com)
+[![Desarrollada con propósito por Bendito Código](https://img.shields.io/badge/desarrollada%20con%20propósito%20por-Bendito%20Código-c5c5d8?style=flat-square&labelColor=20201f)](https://benditocodigo.com)
 
 </div>
 
@@ -174,7 +174,7 @@ Consulta el archivo [LICENSE](./LICENSE) para los términos completos.
 
 <div align="center">
 
-Hecho con ❤️ en México por [**Bendito Código**](https://benditocodigo.com)
+Desarrollada con propósito 🫀 por [**Bendito Código**](https://benditocodigo.com)
 
 *Un changarro pa' los changarros* 🏪
 
