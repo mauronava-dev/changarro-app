@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import packageJson from '../../package.json'
 
 const settingsStore = useSettingsStore()
 
@@ -171,7 +172,22 @@ function toggleTax() {
 
     <div class="flex justify-between items-center py-4 border-b border-outline-variant">
       <span class="text-[15px] text-on-surface font-sans">Versión</span>
-      <span class="text-[15px] text-on-surface-variant font-sans">0.1.0</span>
+      <span class="text-[15px] text-on-surface-variant font-sans">{{ packageJson.version }}</span>
+    </div>
+
+    <!-- Footer note -->
+    <div class="mt-12 text-center text-[14px] text-on-surface-variant/60 font-sans flex items-center justify-center gap-1.5 pb-8">
+      <span>Desarrollada con propósito</span>
+      <span class="material-symbols-outlined text-surface-tint text-[16px]" style="font-variation-settings: 'FILL' 1">favorite</span>
+      <span>por</span>
+      <a
+        href="https://benditocodigo.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-surface-tint font-bold hover:underline"
+      >
+        Bendito Código
+      </a>
     </div>
   </div>
 </template>

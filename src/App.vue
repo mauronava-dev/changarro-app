@@ -25,12 +25,11 @@ function formatPrice(price: number): string {
 <template>
   <!-- TopAppBar -->
   <header
-    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 px-5 pt-[env(safe-area-inset-top)] bg-surface-container/80 backdrop-blur-lg border-b border-outline-variant"
-    style="padding-top: env(safe-area-inset-top)"
+    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between min-h-16 px-5 bg-surface-container/80 backdrop-blur-lg border-b border-outline-variant"
+    style="padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: 8px;"
   >
     <!-- Left: Logo + Name -->
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-primary-container"></div>
+    <div class="flex items-center">
       <span
         class="font-display text-[22px] font-bold text-primary-fixed-dim truncate max-w-[160px]"
         >{{ settingsStore.businessName }}</span
