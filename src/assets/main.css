@@ -180,6 +180,13 @@
     overflow-x: hidden;
     /* Extend background under system bars when edge-to-edge is active */
     min-height: 100dvh;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
   }
 
   /* Material Symbols icon configuration */
