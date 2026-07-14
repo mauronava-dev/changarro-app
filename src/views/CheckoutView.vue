@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { playCheckoutSuccessAnimation } from '@/composables/useParticles'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -92,6 +93,7 @@ async function handleConfirmSale() {
   isSubmitting.value = true
   try {
     await cartStore.finalizeSale(cashAmount.value, change.value)
+    await playCheckoutSuccessAnimation()
     router.push('/')
   } catch (error) {
     console.error('Error finalizando la venta:', error)
