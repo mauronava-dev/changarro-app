@@ -114,6 +114,8 @@ interface Sale {
   taxRate: number // porcentaje de impuesto aplicado
   taxAmount: number // monto del impuesto
   total: number // monto final cobrado
+  receivedAmount?: number // monto en efectivo recibido del cliente
+  changeAmount?: number // cambio entregado al cliente
   createdAt: string // ISO 8601
 }
 ```

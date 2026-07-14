@@ -48,7 +48,17 @@ Aquí ves todo lo que llevas en la venta actual.
 - **Ajustar cantidades**: usa los botones **+** y **-** junto a cada producto
 - **Eliminar un producto**: toca el botón de eliminar y confirma en la ventana que aparece
 - **Ver totales**: el subtotal, IVA (si está activo) y total se calculan automáticamente
-- **Finalizar la venta**: toca el botón **Finalizar Venta** para registrarla en tu historial
+- **Cobrar**: toca el botón **Cobrar** para ir a la pantalla de Cobro (Checkout) e ingresar el pago.
+
+### Cobro (Checkout)
+
+Se accede desde el botón **Cobrar** en la pantalla del Carrito. Es una interfaz ágil para recibir el dinero y calcular el cambio rápidamente.
+
+- **Monto recibido**: campo para ingresar el dinero que te entrega el cliente.
+- **Botones de ajuste rápido (`-1` y `+1`)**: suma o resta un peso de forma rápida y cómoda sin tener que abrir el teclado.
+- **Sugerencias de pago**: botones para seleccionar cantidades predefinidas (como $50, $100, $200, $500, o el pago exacto) basadas en tu total.
+- **Cálculo de cambio**: se muestra en tiempo real el cambio a devolver (en verde) o la cantidad restante en caso de ser insuficiente (en rojo).
+- **Cobro seguro**: el botón de cobrar cuenta con un contador regresivo de 3 segundos antes de habilitarse para evitar confirmaciones accidentales. Al finalizar la venta, se muestra una animación festiva de fuegos artificiales verdes y el sistema te regresa inmediatamente a la pantalla de **Inicio** para atender al siguiente cliente.
 
 ### Ventas (historial)
 
@@ -103,6 +113,9 @@ Barra superior:
 
 Inicio:
   └── Venta Rápida (botón +)
+
+Carrito:
+  └── Cobro / Checkout (botón Cobrar)
 
 Ventas:
   └── Detalle de Venta (al tocar una venta)

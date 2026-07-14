@@ -61,7 +61,7 @@ Antes de vender necesitas registrar lo que ofreces.
 3. Puedes ajustar las cantidades con los botones **+** y **-**
 4. Si quieres quitar un producto, toca el botón de eliminar y confirma
 5. Revisa el subtotal, IVA (si está activo) y total
-6. Toca **Finalizar Venta** para registrar la venta
+6. Toca **Cobrar** para ir a la pantalla de cobro, ingresa el pago del cliente para calcular su cambio y confirma la transacción.
 
 ### Paso 4: Consulta tu historial de ventas
 
