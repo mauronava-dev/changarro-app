@@ -59,11 +59,11 @@ const isValid = computed(() => {
 })
 
 // Quick cash bill suggestions (Mexico/Latin America standard: 50, 100, 200, 500)
-const denominations = [50, 100, 200, 500]
+const denominations = [50, 100, 150, 200, 500, 700, 800, 1000]
 
 const suggestedDenominations = computed(() => {
   // Only suggest bills that are greater than or equal to the total
-  return denominations.filter((d) => d >= total.value)
+  return denominations.filter((d) => d >= total.value).slice(0, 4)
 })
 
 function selectDenomination(amount: number) {
@@ -175,7 +175,7 @@ async function handleConfirmSale() {
           >
             Exacto
           </button>
-          
+
           <!-- Suggested bills -->
           <button
             v-for="amount in suggestedDenominations"
