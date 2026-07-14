@@ -11,7 +11,7 @@ fondas, papelerías y cualquier negocio pequeño que quiera llevar el control
 de sus ventas sin depender de internet ni pagar suscripciones.
 
 [![Versión](https://img.shields.io/badge/versión-0.5.0-c5c5d8?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
-[![Plataforma](https://img.shields.io/badge/plataforma-Android%20%7C%20Windows%20%7C%20macOS-4ade80?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
+[![Plataforma](https://img.shields.io/badge/plataforma-Android%20%7C%20Windows%20%26%20macOS%20(futuro)-4ade80?style=flat-square&labelColor=20201f)](https://github.com/bendito-codigo/changarro-app/releases)
 [![Sin internet](https://img.shields.io/badge/funciona-sin%20internet-c5c5d8?style=flat-square&labelColor=20201f)](#)
 [![Licencia](https://img.shields.io/badge/licencia-PolyForm%20NC-c5c5d8?style=flat-square&labelColor=20201f)](./LICENSE)
 [![Desarrollada con propósito por Bendito Código](https://img.shields.io/badge/desarrollada%20con%20propósito%20por-Bendito%20Código-c5c5d8?style=flat-square&labelColor=20201f)](https://benditocodigo.com)
@@ -70,9 +70,9 @@ Para ti, si:
 
 Cuando esté disponible, la encontrarás en la sección de [**Releases**](https://github.com/bendito-codigo/changarro-app/releases) de este repositorio:
 
-- 📱 **Android** — archivo `.apk` listo para instalar
-- 🖥️ **Windows** — instalador `.exe`
-- 🍎 **macOS** — archivo `.dmg`
+- 📱 **Android** — archivo `.apk` listo para instalar (Plataforma activa)
+- 🖥️ **Windows** — instalador `.exe` (Próximamente / En planes)
+- 🍎 **macOS** — archivo `.dmg` (Próximamente / En planes)
 
 ---
 
