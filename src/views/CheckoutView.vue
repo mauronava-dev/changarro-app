@@ -74,6 +74,12 @@ function setExactPayment() {
   cashReceived.value = total.value.toFixed(2)
 }
 
+function adjustCash(amount: number) {
+  const currentVal = parseFloat(cashReceived.value) || 0
+  const newVal = Math.max(0, currentVal + amount)
+  cashReceived.value = Number.isInteger(newVal) ? newVal.toString() : newVal.toFixed(2)
+}
+
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
@@ -145,21 +151,40 @@ async function handleConfirmSale() {
         ¿Con cuánto paga el cliente?
       </h2>
 
-      <!-- Input Field -->
-      <div class="relative mb-6">
-        <span class="absolute left-6 top-1/2 -translate-y-1/2 text-[24px] font-bold text-on-surface-variant">
-          $
-        </span>
-        <input
-          v-model="cashReceived"
-          type="number"
-          inputmode="decimal"
-          placeholder="0.00"
-          min="0"
-          step="any"
-          class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-12 pr-6 py-5 text-[20px] font-bold text-on-surface placeholder:text-on-surface-variant/30 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
-          autofocus
-        />
+      <!-- Input Field and Adjust Buttons -->
+      <div class="flex items-center gap-3 mb-6">
+        <div class="relative flex-1">
+          <span class="absolute left-6 top-1/2 -translate-y-1/2 text-[24px] font-bold text-on-surface-variant">
+            $
+          </span>
+          <input
+            v-model="cashReceived"
+            type="number"
+            inputmode="decimal"
+            placeholder="0.00"
+            min="0"
+            step="any"
+            class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-12 pr-6 py-5 text-[20px] font-bold text-on-surface placeholder:text-on-surface-variant/30 focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent outline-none transition-all"
+            autofocus
+          />
+        </div>
+        <!-- Quick adjustment buttons -->
+        <div class="flex gap-2 shrink-0">
+          <button
+            class="flex items-center justify-center w-14 h-14 rounded-full border border-outline-variant bg-surface-container-highest hover:bg-surface-variant transition-colors active:scale-90 text-[18px] font-bold text-on-surface"
+            aria-label="Restar 1 peso"
+            @click="adjustCash(-1)"
+          >
+            -1
+          </button>
+          <button
+            class="flex items-center justify-center w-14 h-14 rounded-full border border-outline-variant bg-surface-container-highest hover:bg-surface-variant transition-colors active:scale-90 text-[18px] font-bold text-on-surface"
+            aria-label="Sumar 1 peso"
+            @click="adjustCash(1)"
+          >
+            +1
+          </button>
+        </div>
       </div>
 
       <!-- Quick Denominations -->
