@@ -62,10 +62,16 @@ Se accede desde el botón **Cobrar** en la pantalla del Carrito. Es una interfaz
 
 ### Ventas (historial)
 
-Aquí aparecen todas las ventas que has realizado, ordenadas de la más reciente
-a la más antigua.
+Aquí aparecen las ventas que has realizado, con filtros para encontrar fácilmente lo que buscas.
 
 - **Ver detalle**: toca cualquier venta para ver exactamente qué productos vendiste, en qué cantidad, y el total con su desglose
+- **Filtros de fecha** (botones en la parte superior derecha):
+  - **Turno**: muestra solo las ventas del turno activo (visible únicamente si tienes turnos habilitados)
+  - **Hoy**: muestra las ventas del día actual
+  - **Mes**: muestra las ventas del mes actual; si tocas de nuevo el botón aparece un selector para elegir cualquier mes desde el primero con ventas registradas
+- **Menú de turno** (⋮, solo si turnos está habilitado):
+  - **Cerrar turno**: te lleva a la pantalla de cierre donde verás el resumen de caja
+  - **Historial de turnos**: ver todos los turnos registrados
 
 ### Ajustes
 
@@ -77,9 +83,10 @@ Aquí puedes:
 - Cambiar el nombre de tu negocio
 - Configurar la moneda
 - Activar o desactivar el cálculo de IVA
+- **Habilitar turnos de caja**: activa el sistema de turnos para registrar tus ventas por turno. Al habilitarlo se abre automáticamente el primer turno. Cuando está activo, cada venta queda vinculada al turno en curso
 - Acceder al **Inventario** para gestionar tus productos
-- **Respaldar datos (Exportar)**: descarga una copia de seguridad en un archivo `.json` que contiene tu catálogo de productos (incluyendo imágenes), tus ventas completadas y la configuración del negocio.
-- **Restaurar respaldo (Importar)**: selecciona un archivo de respaldo `.json` para combinarlo con tus datos actuales. Los registros del archivo se agregarán o actualizarán de forma segura sin borrar tu inventario o historial actual.
+- **Respaldar datos (Exportar)**: descarga una copia de seguridad en un archivo `.json` que contiene tu catálogo de productos (incluyendo imágenes), tus ventas completadas, tus turnos y la configuración del negocio
+- **Restaurar respaldo (Importar)**: selecciona un archivo de respaldo `.json` para combinarlo con tus datos actuales. Los registros del archivo se agregarán o actualizarán de forma segura sin borrar tu inventario o historial actual
 
 ### Inventario
 
@@ -98,6 +105,19 @@ permanentemente en tu inventario.
 
 Llena el nombre, precio y categoría, y al tocar **Agregar al Carrito** se
 agregará y la aplicación te llevará directamente al carrito.
+
+### Turnos de caja
+
+Funcionalidad opcional que se activa desde **Ajustes → Turnos de caja**.
+Permite organizar las ventas por turnos de trabajo.
+
+- **Turno activo**: cuando los turnos están habilitados, cada venta queda registrada bajo el turno en curso. En la pantalla de Ventas verás un indicador verde con el número y hora de apertura del turno activo
+- **Cerrar turno**: desde el menú ⋮ en Ventas, elige “Cerrar turno” para ir a la pantalla de cierre:
+  - Verás el total en caja, la cantidad de ventas y el ticket promedio
+  - Puedes registrar un **faltante** si el efectivo no cuadra (es solo informativo)
+  - Puedes escribir **observaciones** sobre el turno
+  - Al confirmar se inicia automáticamente el siguiente turno
+- **Historial de turnos**: desde el mismo menú puedes ver todos los turnos con su duración, total y estado. Toca cualquiera para ver su detalle completo
 
 ---
 
@@ -120,7 +140,13 @@ Carrito:
   └── Cobro / Checkout (botón Cobrar)
 
 Ventas:
-  └── Detalle de Venta (al tocar una venta)
+  ├── Detalle de Venta (al tocar una venta)
+  └── Menú ⋮ (solo con turnos habilitados)
+        ├── Cerrar Turno
+        │     └── Pantalla de Cierre de Turno
+        └── Historial de Turnos
+              └── Detalle de Turno
+                    └── Detalle de Venta (al tocar una venta)
 ```
 
 ---

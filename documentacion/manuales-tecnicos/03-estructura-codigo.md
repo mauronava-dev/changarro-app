@@ -15,6 +15,8 @@ src/
 │   └── main.css           ← Estilos globales y design system
 ├── components/
 │   └── layout/            ← Componentes de layout (TopAppBar, TabBar)
+├── composables/
+│   └── useParticles.ts    ← Efectos de partículas y animaciones festivas
 ├── router/
 │   └── index.ts           ← Definición de rutas
 ├── services/
@@ -24,7 +26,8 @@ src/
 │   ├── products.ts        ← Catálogo de productos
 │   ├── cart.ts            ← Carrito de venta actual
 │   ├── sales.ts           ← Historial de ventas
-│   └── settings.ts        ← Configuración del negocio
+│   ├── settings.ts        ← Configuración del negocio
+│   └── shifts.ts          ← Gestión de turnos de caja (opcional)
 ├── views/                 ← Vistas (una por ruta)
 ├── App.vue                ← Componente raíz
 └── main.ts                ← Punto de entrada
@@ -67,8 +70,21 @@ Gestiona el historial de ventas completadas.
 
 Gestiona la configuración del negocio.
 
-- **Estado**: nombre del negocio, moneda, IVA activo/inactivo, tasa de impuesto
-- **Acciones**: cargar configuración, actualizar ajustes, persistir cambios
+- **Estado**: nombre del negocio, moneda, IVA activo/inactivo, tasa de impuesto, turnos habilitados
+- **Acciones**: cargar configuración, actualizar ajustes, persistir cambios, habilitar/deshabilitar turnos
+
+### shifts.ts
+
+Gestiona el ciclo de vida de los turnos de caja. Es una funcionalidad opcional que se activa desde Ajustes.
+
+- **Estado**: turno activo (`activeShift`)
+- **Acciones**:
+  - `loadActiveShift` — carga el turno sin fecha de cierre desde IndexedDB al arrancar la app
+  - `openShift` — crea un nuevo turno con ID incremental
+  - `closeShift(total, count, notes?, shortage?)` — cierra el turno activo y persiste el resumen
+  - `getShiftSales(id)` — retorna las ventas vinculadas a un turno
+  - `getAllShifts()` — retorna todos los turnos de más reciente a más antiguo
+  - `getShiftById(id)` — retorna un turno específico por su ID
 
 ---
 
@@ -82,12 +98,13 @@ Define la base de datos IndexedDB usando Dexie.js. Contiene:
 - La instancia de Dexie con la definición de tablas e índices
 - El esquema de versionado de la base de datos
 
-La base de datos se llama `changarro` y tiene cuatro tablas:
+La base de datos se llama `changarro` y tiene cinco tablas:
 
 - `products` — índices: id, name, category, isActive, createdAt
-- `sales` — índices: id, createdAt
+- `sales` — índices: id, createdAt, shiftId
 - `settings` — índice: id
 - `cartItems` — índices: id, productId
+- `shifts` — índice: id (la clave primaria es el número de turno incremental)
 
 Los stores importan `db` directamente y ejecutan operaciones CRUD sobre las tablas.
 
@@ -108,12 +125,15 @@ Cada vista corresponde a una ruta de la aplicación:
 | ----------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
 | HomeView          | `/`                                                        | Catálogo de productos con búsqueda y FAB de venta rápida |
 | CartView          | `/cart`                                                    | Carrito con controles de cantidad y finalizar venta      |
-| SalesView         | `/sales`                                                   | Historial de ventas ordenado por fecha                   |
+| SalesView         | `/sales`                                                   | Historial de ventas con filtros por turno, día y mes     |
 | SaleDetailView    | `/sales/:id`                                               | Detalle completo de una venta específica                 |
 | QuickSaleView     | `/quick-sale`                                              | Formulario para agregar item personalizado al carrito    |
-| SettingsView      | `/settings`                                                | Configuración del negocio                                |
+| SettingsView      | `/settings`                                               | Configuración del negocio                                |
 | InventoryView     | `/settings/inventory`                                      | Gestión CRUD del catálogo de productos                   |
 | InventoryFormView | `/settings/inventory/new` y `/settings/inventory/:id/edit` | Formulario de creación y edición de producto             |
+| ShiftCloseView    | `/shift-close`                                             | Resumen y confirmación de cierre de turno                |
+| ShiftHistoryView  | `/shifts`                                                  | Listado de todos los turnos cerrados y el activo         |
+| ShiftDetailView   | `/shifts/:id`                                              | Detalle de un turno: timeline, stats y ventas            |
 
 Las rutas se definen en `src/router/index.ts` con carga diferida (lazy loading)
 para cada vista.

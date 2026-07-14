@@ -144,12 +144,31 @@ Configuración general del negocio.
 ```typescript
 interface AppSettings {
   id: string
-  taxEnabled: boolean // si el IVA está activo
-  taxRate: number // porcentaje (ej: 16)
-  businessName: string // nombre del negocio
-  currency: string // moneda (ej: MXN)
+  taxEnabled: boolean    // si el IVA está activo
+  taxRate: number        // porcentaje (ej: 16)
+  businessName: string   // nombre del negocio
+  currency: string       // moneda (ej: MXN)
+  shiftsEnabled: boolean // si el sistema de turnos está activo
 }
 ```
+
+### Shift
+
+Representa un turno de caja. Se usa solo cuando `shiftsEnabled` está activo.
+
+```typescript
+interface Shift {
+  id: number           // ID incremental: 1, 2, 3…
+  startedAt: string    // ISO 8601 — momento de apertura
+  closedAt?: string    // ISO 8601 — undefined si el turno sigue abierto
+  totalCash: number    // suma de los totales de ventas del turno
+  salesCount: number   // cantidad de ventas realizadas en el turno
+  notes?: string       // observaciones opcionales al cierre
+  shortage?: number    // monto de faltante en caja (informativo)
+}
+```
+
+Cada `Sale` tiene un campo `shiftId?: number` que vincula la venta al turno en que se realizó.
 
 ### CartItemRecord
 
@@ -173,6 +192,8 @@ interface CartItemRecord {
 - **IndexedDB** es el motor de almacenamiento principal a través de Dexie.js
 - **El carrito se persiste** en la tabla `cartItems` para que no se pierda al cerrar la app
 - **Los ajustes se persisten** en la tabla `settings` con un registro único
+- **Los turnos se persisten** en la tabla `shifts`; el turno activo se carga al arrancar si `shiftsEnabled` es `true`
+- **Las ventas referencian al turno** mediante `shiftId` (campo opcional); las ventas sin turno son completamente válidas
 - No se usa localStorage ni sessionStorage
 - Eventual: migración a SQLite vía Tauri para mejor rendimiento con datasets grandes
 
@@ -220,7 +241,10 @@ changarro-app/
     │   ├── products.ts        ← Store de productos
     │   ├── cart.ts            ← Store del carrito
     │   ├── sales.ts           ← Store de ventas
-    │   └── settings.ts        ← Store de ajustes
+    │   ├── settings.ts        ← Store de ajustes
+    │   └── shifts.ts          ← Store de turnos de caja (opcional)
+    ├── composables/
+    │   └── useParticles.ts    ← Animaciones de partículas
     ├── views/
     │   ├── HomeView.vue       ← Catálogo (/)
     │   ├── CartView.vue       ← Carrito (/cart)
@@ -229,7 +253,10 @@ changarro-app/
     │   ├── QuickSaleView.vue  ← Venta rápida (/quick-sale)
     │   ├── SettingsView.vue   ← Ajustes (/settings)
     │   ├── InventoryView.vue  ← Inventario (/settings/inventory)
-    │   └── InventoryFormView.vue ← Crear/Editar producto
+    │   ├── InventoryFormView.vue ← Crear/Editar producto
+    │   ├── ShiftCloseView.vue ← Cierre de turno (/shift-close)
+    │   ├── ShiftHistoryView.vue ← Historial de turnos (/shifts)
+    │   └── ShiftDetailView.vue ← Detalle de turno (/shifts/:id)
     ├── App.vue
     └── main.ts
 ```
