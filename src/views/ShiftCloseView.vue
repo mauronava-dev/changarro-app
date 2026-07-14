@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useShiftsStore } from '@/stores/shifts'
+import { playCheckoutSuccessAnimation } from '@/composables/useParticles'
 import type { Sale } from '@/services/db'
 
 const router = useRouter()
@@ -55,6 +56,8 @@ async function confirmClose() {
     await shiftsStore.closeShift(totalCash.value, salesCount.value)
     // Open next shift automatically
     await shiftsStore.openShift()
+    // Play the same celebration animation as checkout
+    await playCheckoutSuccessAnimation()
     router.replace('/sales')
   } catch (e) {
     console.error('Error al cerrar turno:', e)

@@ -10,7 +10,7 @@ const settingsStore = useSettingsStore()
 const shiftsStore = useShiftsStore()
 
 // ─── Filter state ────────────────────────────────────────────────────────────
-const activeFilter = ref<'Turno' | 'Hoy' | 'Mes'>('Hoy')
+const activeFilter = ref<'Turno' | 'Hoy' | 'Mes'>(settingsStore.shiftsEnabled ? 'Turno' : 'Hoy')
 const selectedMonth = ref('')
 const showMonthSelector = ref(false)
 const showShiftMenu = ref(false)
