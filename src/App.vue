@@ -62,7 +62,13 @@ function formatPrice(price: number): string {
   </header>
 
   <!-- Main content -->
-  <main class="pt-24 pb-32 px-5">
+  <main
+    class="px-5"
+    style="
+      padding-top: calc(64px + env(safe-area-inset-top, 0px) + 20px);
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 16px);
+    "
+  >
     <RouterView />
   </main>
 
