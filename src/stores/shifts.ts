@@ -40,7 +40,12 @@ export const useShiftsStore = defineStore('shifts', () => {
   }
 
   // Close the active shift: update totals and set closedAt, then open next
-  async function closeShift(totalCash: number, salesCount: number): Promise<void> {
+  async function closeShift(
+    totalCash: number,
+    salesCount: number,
+    notes?: string,
+    shortage?: number,
+  ): Promise<void> {
     if (!activeShift.value) return
 
     const closedAt = new Date().toISOString()
@@ -49,6 +54,8 @@ export const useShiftsStore = defineStore('shifts', () => {
       closedAt,
       totalCash,
       salesCount,
+      ...(notes?.trim() ? { notes: notes.trim() } : {}),
+      ...(typeof shortage === 'number' && shortage > 0 ? { shortage } : {}),
     }
 
     await db.shifts.put(updated)

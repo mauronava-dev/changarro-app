@@ -44,6 +44,8 @@ export interface Shift {
   closedAt?: string         // ISO 8601 — undefined means active
   totalCash: number         // sum of sale totals in this shift
   salesCount: number        // number of sales in this shift
+  notes?: string            // optional notes written at shift close
+  shortage?: number         // optional cash shortage amount (informational)
 }
 
 export interface AppSettings {

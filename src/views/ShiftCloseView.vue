@@ -11,6 +11,8 @@ const shiftsStore = useShiftsStore()
 const sales = ref<Sale[]>([])
 const isLoading = ref(true)
 const isClosing = ref(false)
+const notes = ref('')
+const shortage = ref<number | null>(null)
 
 const shift = computed(() => shiftsStore.activeShift)
 
@@ -53,7 +55,12 @@ async function confirmClose() {
   if (!shift.value || isClosing.value) return
   isClosing.value = true
   try {
-    await shiftsStore.closeShift(totalCash.value, salesCount.value)
+    await shiftsStore.closeShift(
+      totalCash.value,
+      salesCount.value,
+      notes.value || undefined,
+      shortage.value ?? undefined,
+    )
     // Open next shift automatically
     await shiftsStore.openShift()
     // Play the same celebration animation as checkout
@@ -163,6 +170,47 @@ async function confirmClose() {
       <div v-else class="bg-surface-container border border-outline-variant rounded-[1.5rem] p-8 mb-6 text-center">
         <span class="material-symbols-outlined text-[36px] text-on-surface-variant/40 mb-3 block">receipt_long</span>
         <p class="text-[14px] text-on-surface-variant font-sans">No hubo ventas en este turno</p>
+      </div>
+
+      <!-- Notes & Shortage Card -->
+      <div class="bg-surface-container border border-outline-variant rounded-[1.5rem] p-6 mb-4">
+        <p class="text-[13px] uppercase tracking-wider font-semibold text-on-surface-variant font-display mb-4">
+          Notas del cierre <span class="normal-case tracking-normal font-normal text-on-surface-variant/50">(opcionales)</span>
+        </p>
+
+        <!-- Shortage amount -->
+        <div class="mb-4">
+          <label class="text-[13px] text-on-surface-variant font-sans mb-2 block">
+            Faltante en caja
+          </label>
+          <div class="relative flex items-center">
+            <span class="absolute left-5 text-[15px] text-on-surface-variant/60 font-sans select-none">$</span>
+            <input
+              v-model.number="shortage"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="w-full h-12 pl-9 pr-5 bg-surface-container-low border border-outline-variant rounded-full text-[15px] text-on-surface font-sans placeholder-on-surface-variant/30 focus:outline-none focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent transition-all"
+            />
+          </div>
+          <p class="text-[11px] text-on-surface-variant/50 font-sans mt-1.5 pl-1">
+            Si el efectivo en caja es menor al esperado
+          </p>
+        </div>
+
+        <!-- Notes textarea -->
+        <div>
+          <label class="text-[13px] text-on-surface-variant font-sans mb-2 block">
+            Observaciones
+          </label>
+          <textarea
+            v-model="notes"
+            rows="3"
+            placeholder="Ej: Se realizó cambio de efectivo, llegó proveedor..."
+            class="w-full px-5 py-3 bg-surface-container-low border border-outline-variant rounded-2xl text-[14px] text-on-surface font-sans placeholder-on-surface-variant/30 focus:outline-none focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent transition-all resize-none leading-relaxed"
+          />
+        </div>
       </div>
 
       <!-- Confirm Button -->

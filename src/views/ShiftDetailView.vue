@@ -148,6 +148,30 @@ function formatTime(iso: string): string {
         </div>
       </div>
 
+      <!-- Shortage & Notes card — shown only if recorded -->
+      <div
+        v-if="shift.shortage || shift.notes"
+        class="bg-surface-container border border-outline-variant rounded-[1.5rem] p-6 mb-4"
+      >
+        <p class="text-[13px] uppercase tracking-wider font-semibold text-on-surface-variant font-display mb-4">
+          Notas del cierre
+        </p>
+
+        <!-- Shortage -->
+        <div v-if="shift.shortage" class="flex items-center justify-between py-2 border-b border-outline-variant/50 mb-3">
+          <div class="flex items-center gap-2 text-[14px] text-on-surface-variant font-sans">
+            <span class="material-symbols-outlined text-[17px] text-error">money_off</span>
+            Faltante registrado
+          </div>
+          <span class="text-[15px] font-bold text-error">-${{ formatPrice(shift.shortage) }}</span>
+        </div>
+
+        <!-- Notes -->
+        <p v-if="shift.notes" class="text-[14px] text-on-surface font-sans leading-relaxed">
+          {{ shift.notes }}
+        </p>
+      </div>
+
       <!-- Sales list -->
       <div
         v-if="sales.length > 0"
