@@ -338,6 +338,25 @@ function formatTime(iso: string): string {
       </div>
     </div>
 
+    <!-- Active Shift Banner: visible only when Turno filter is active -->
+    <div
+      v-if="activeFilter === 'Turno' && settingsStore.shiftsEnabled && shiftsStore.activeShift"
+      class="flex items-center gap-3 mb-5 px-4 py-3 bg-surface-container-high border border-outline-variant/60 rounded-2xl"
+    >
+      <span class="relative flex shrink-0">
+        <span class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-60" />
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
+      </span>
+      <div class="flex-1 min-w-0">
+        <span class="text-[14px] font-semibold text-on-surface font-display">
+          Turno #{{ shiftsStore.activeShift.id }}
+        </span>
+        <span class="text-[13px] text-on-surface-variant font-sans ml-2">
+          · Abierto desde las {{ new Date(shiftsStore.activeShift.startedAt).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) }}
+        </span>
+      </div>
+    </div>
+
     <!-- Loading -->
     <div v-if="isLoading" class="flex justify-center py-16">
       <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin">
