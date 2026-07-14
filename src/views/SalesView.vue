@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSalesStore } from '@/stores/sales'
+import { db } from '@/services/db'
 
 const salesStore = useSalesStore()
 
@@ -13,22 +14,66 @@ const showMonthSelector = ref(false)
 const today = new Date()
 selectedMonth.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
 
-onMounted(() => {
-  salesStore.loadSales()
+const firstSaleDate = ref<Date | null>(null)
+
+async function loadOldestSaleDate() {
+  try {
+    const oldestSale = await db.sales.orderBy('createdAt').first()
+    if (oldestSale) {
+      firstSaleDate.value = new Date(oldestSale.createdAt)
+    } else {
+      firstSaleDate.value = new Date()
+    }
+  } catch (error) {
+    console.error('Error loading oldest sale date:', error)
+    firstSaleDate.value = new Date()
+  }
+}
+
+onMounted(async () => {
+  await salesStore.loadSales()
+  await loadOldestSaleDate()
 })
 
-// Generate list of the last 12 months in Spanish
+// Generate dynamic list of months from current month backward to the oldest sale's month
 const availableMonths = computed(() => {
   const months = []
-  const current = new Date()
-  for (let i = 0; i < 12; i++) {
-    const d = new Date(current.getFullYear(), current.getMonth() - i, 1)
+  const today = new Date()
+  const currentYear = today.getFullYear()
+  const currentMonth = today.getMonth()
+
+  const startDate = firstSaleDate.value || today
+  const startYear = startDate.getFullYear()
+  const startMonth = startDate.getMonth()
+
+  let tempYear = currentYear
+  let tempMonth = currentMonth
+
+  while (tempYear > startYear || (tempYear === startYear && tempMonth >= startMonth)) {
+    const d = new Date(tempYear, tempMonth, 1)
     const monthName = d.toLocaleDateString('es-MX', { month: 'long' })
     const capitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1)
-    const label = `${capitalized} ${d.getFullYear().toString().slice(-2)}` // e.g. "Julio 26"
+    const label = `${capitalized} ${d.getFullYear().toString().slice(-2)}`
     const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    
+    months.push({ label, value })
+
+    tempMonth--
+    if (tempMonth < 0) {
+      tempMonth = 11
+      tempYear--
+    }
+  }
+
+  // Fallback to make sure there's at least the current month
+  if (months.length === 0) {
+    const monthName = today.toLocaleDateString('es-MX', { month: 'long' })
+    const capitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1)
+    const label = `${capitalized} ${today.getFullYear().toString().slice(-2)}`
+    const value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
     months.push({ label, value })
   }
+
   return months
 })
 
