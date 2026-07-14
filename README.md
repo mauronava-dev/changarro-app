@@ -132,13 +132,17 @@ Changarro está diseñado con un principio claro:
 
 ---
 
-## 🤝 ¿Quieres contribuir?
+## 💬 Comunidad y reportes
 
-Changarro es un proyecto de código abierto hecho con cariño por [Bendito Código](https://benditocodigo.com). Toda contribución es bienvenida:
+Changarro es desarrollado y mantenido exclusivamente por [Bendito Código](https://benditocodigo.com). **No aceptamos Pull Requests** — todo el desarrollo, revisión de código y decisiones de producto se gestionan internamente para garantizar los estándares de calidad y seguridad de la aplicación.
 
-- 🐛 **Reportar bugs** → abre un [Issue](https://github.com/bendito-codigo/changarro-app/issues)
-- 💡 **Proponer ideas** → abre un Issue con la etiqueta `enhancement`
-- 🔧 **Contribuir código** → lee la [guía de desarrollo](./documentacion/manuales-tecnicos/02-entorno-desarrollo.md) y abre un Pull Request
+Lo que sí puedes hacer:
+
+- 🐛 **Reportar un bug** → abre un [Issue](https://github.com/bendito-codigo/changarro-app/issues) describiendo el problema
+- 💡 **Proponer una mejora** → abre un Issue con la etiqueta `sugerencia` y cuéntanos tu idea
+- ❓ **Hacer una pregunta** → usa la sección de [Discussions](https://github.com/bendito-codigo/changarro-app/discussions)
+
+> Tu feedback como usuario es lo que guía el desarrollo. Cada reporte e idea se lee y se toma en cuenta.
 
 ---
 
