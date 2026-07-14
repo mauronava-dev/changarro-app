@@ -92,7 +92,7 @@ async function handleConfirmSale() {
   isSubmitting.value = true
   try {
     await cartStore.finalizeSale(cashAmount.value, change.value)
-    router.push('/sales')
+    router.push('/')
   } catch (error) {
     console.error('Error finalizando la venta:', error)
   } finally {
