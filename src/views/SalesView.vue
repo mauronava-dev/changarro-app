@@ -1,88 +1,127 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watchEffect, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useSalesStore } from '@/stores/sales'
-import { db } from '@/services/db'
+import { db, type Sale } from '@/services/db'
 
-const salesStore = useSalesStore()
-
+// ─── Filter state ────────────────────────────────────────────────────────────
 const activeFilter = ref<'Turno' | 'Hoy' | 'Mes'>('Hoy')
 const selectedMonth = ref('')
 const showMonthSelector = ref(false)
+const isLoading = ref(false)
 
-// Set default selected month to current month (YYYY-MM)
-const today = new Date()
-selectedMonth.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
+// ─── Filtered results (fetched directly from IndexedDB) ──────────────────────
+const filteredSales = ref<Sale[]>([])
 
+// ─── Month range ─────────────────────────────────────────────────────────────
 const firstSaleDate = ref<Date | null>(null)
 
-async function loadOldestSaleDate() {
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function todayRange(): { lower: string; upper: string } {
+  const start = new Date()
+  start.setHours(0, 0, 0, 0)
+  const end = new Date()
+  end.setHours(23, 59, 59, 999)
+  return { lower: start.toISOString(), upper: end.toISOString() }
+}
+
+function monthRange(yyyyMM: string): { lower: string; upper: string } {
+  const [yearStr, monthStr] = yyyyMM.split('-')
+  const year = parseInt(yearStr!)
+  const month = parseInt(monthStr!) - 1
+  const start = new Date(year, month, 1, 0, 0, 0, 0)
+  const end = new Date(year, month + 1, 0, 23, 59, 59, 999)
+  return { lower: start.toISOString(), upper: end.toISOString() }
+}
+
+// ─── Core: query IndexedDB only for the visible date range ───────────────────
+async function fetchSalesForFilter() {
+  isLoading.value = true
   try {
-    const oldestSale = await db.sales.orderBy('createdAt').first()
-    if (oldestSale) {
-      firstSaleDate.value = new Date(oldestSale.createdAt)
+    let range: { lower: string; upper: string }
+
+    if (activeFilter.value === 'Turno' || activeFilter.value === 'Hoy') {
+      range = todayRange()
     } else {
-      firstSaleDate.value = new Date()
+      range = monthRange(selectedMonth.value)
     }
-  } catch (error) {
-    console.error('Error loading oldest sale date:', error)
-    firstSaleDate.value = new Date()
+
+    // Uses the createdAt B-tree index — only reads matching rows from disk
+    filteredSales.value = await db.sales
+      .where('createdAt')
+      .between(range.lower, range.upper, true, true)
+      .reverse()
+      .toArray()
+  } finally {
+    isLoading.value = false
   }
 }
 
+// ─── Reactively re-fetch when filter changes ──────────────────────────────────
+watchEffect(() => {
+  // Access reactive deps so watchEffect tracks them
+  void activeFilter.value
+  void selectedMonth.value
+  fetchSalesForFilter()
+})
+
+// ─── Load oldest sale date for the month selector ─────────────────────────────
+async function loadOldestSaleDate() {
+  const oldest = await db.sales.orderBy('createdAt').first()
+  firstSaleDate.value = oldest ? new Date(oldest.createdAt) : new Date()
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+const today = new Date()
+selectedMonth.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
+
 onMounted(async () => {
-  await salesStore.loadSales()
   await loadOldestSaleDate()
 })
 
-// Generate dynamic list of months from current month backward to the oldest sale's month
+// ─── Month selector ───────────────────────────────────────────────────────────
 const availableMonths = computed(() => {
-  const months = []
-  const today = new Date()
-  const currentYear = today.getFullYear()
-  const currentMonth = today.getMonth()
+  const months: { label: string; value: string }[] = []
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth()
 
-  const startDate = firstSaleDate.value || today
+  const startDate = firstSaleDate.value ?? now
   const startYear = startDate.getFullYear()
   const startMonth = startDate.getMonth()
 
-  let tempYear = currentYear
-  let tempMonth = currentMonth
+  let y = currentYear
+  let m = currentMonth
 
-  while (tempYear > startYear || (tempYear === startYear && tempMonth >= startMonth)) {
-    const d = new Date(tempYear, tempMonth, 1)
-    const monthName = d.toLocaleDateString('es-MX', { month: 'long' })
-    const capitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1)
-    const label = `${capitalized} ${d.getFullYear().toString().slice(-2)}`
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    
-    months.push({ label, value })
-
-    tempMonth--
-    if (tempMonth < 0) {
-      tempMonth = 11
-      tempYear--
-    }
+  while (y > startYear || (y === startYear && m >= startMonth)) {
+    const d = new Date(y, m, 1)
+    const name = d.toLocaleDateString('es-MX', { month: 'long' })
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1)
+    months.push({
+      label: `${capitalized} ${d.getFullYear().toString().slice(-2)}`,
+      value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+    })
+    m--
+    if (m < 0) { m = 11; y-- }
   }
 
-  // Fallback to make sure there's at least the current month
   if (months.length === 0) {
-    const monthName = today.toLocaleDateString('es-MX', { month: 'long' })
-    const capitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1)
-    const label = `${capitalized} ${today.getFullYear().toString().slice(-2)}`
-    const value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
-    months.push({ label, value })
+    const name = now.toLocaleDateString('es-MX', { month: 'long' })
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1)
+    months.push({
+      label: `${capitalized} ${now.getFullYear().toString().slice(-2)}`,
+      value: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+    })
   }
 
   return months
 })
 
-// Get label for the active month button
 const selectedMonthLabel = computed(() => {
-  const found = availableMonths.value.find((m) => m.value === selectedMonth.value)
-  return found ? found.label : 'Mes'
+  if (activeFilter.value !== 'Mes') return 'Mes'
+  return availableMonths.value.find((m) => m.value === selectedMonth.value)?.label ?? 'Mes'
 })
 
+// ─── Filter UI interactions ───────────────────────────────────────────────────
 function selectFilter(filter: 'Turno' | 'Hoy' | 'Mes') {
   if (filter === 'Mes') {
     if (activeFilter.value === 'Mes') {
@@ -104,49 +143,20 @@ function selectMonth(value: string) {
   showMonthSelector.value = false
 }
 
-// Computes filtered sales based on Turno/Hoy/Mes
-const filteredSales = computed(() => {
-  const allSales = salesStore.sales
-
-  if (activeFilter.value === 'Hoy' || activeFilter.value === 'Turno') {
-    const todayStr = new Date().toDateString()
-    return allSales.filter((sale) => {
-      return new Date(sale.createdAt).toDateString() === todayStr
-    })
-  }
-
-  if (activeFilter.value === 'Mes') {
-    const [year, month] = selectedMonth.value.split('-')
-    return allSales.filter((sale) => {
-      const saleDate = new Date(sale.createdAt)
-      return (
-        saleDate.getFullYear() === parseInt(year!) &&
-        String(saleDate.getMonth() + 1).padStart(2, '0') === month
-      )
-    })
-  }
-
-  return allSales
-})
-
+// ─── Formatters ───────────────────────────────────────────────────────────────
 function formatPrice(price: number): string {
   return price.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 function formatDate(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleDateString('es-MX', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+  return new Date(iso).toLocaleDateString('es-MX', {
+    day: 'numeric', month: 'short', year: 'numeric',
   })
 }
 
 function formatTime(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleTimeString('es-MX', {
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Date(iso).toLocaleTimeString('es-MX', {
+    hour: '2-digit', minute: '2-digit',
   })
 }
 </script>
@@ -159,9 +169,8 @@ function formatTime(iso: string): string {
         Ventas
       </h1>
 
-      <!-- Filter Buttons Wrapper -->
+      <!-- Filter Buttons -->
       <div class="flex items-center gap-2 self-end relative">
-        <!-- Turno and Hoy filters -->
         <button
           v-for="filter in (['Turno', 'Hoy'] as const)"
           :key="filter"
@@ -176,7 +185,7 @@ function formatTime(iso: string): string {
           {{ filter }}
         </button>
 
-        <!-- Mes filter container (relative for dropdown placement) -->
+        <!-- Mes button + dropdown -->
         <div class="relative">
           <button
             :class="[
@@ -187,8 +196,11 @@ function formatTime(iso: string): string {
             ]"
             @click="selectFilter('Mes')"
           >
-            <span>{{ activeFilter === 'Mes' ? selectedMonthLabel : 'Mes' }}</span>
-            <span class="material-symbols-outlined text-[16px] transition-transform duration-200" :class="{ 'rotate-180': showMonthSelector }">
+            <span>{{ selectedMonthLabel }}</span>
+            <span
+              class="material-symbols-outlined text-[16px] transition-transform duration-200"
+              :class="{ 'rotate-180': showMonthSelector }"
+            >
               keyboard_arrow_down
             </span>
           </button>
@@ -221,72 +233,53 @@ function formatTime(iso: string): string {
     </div>
 
     <!-- Loading -->
-    <div v-if="salesStore.isLoading" class="flex justify-center py-16">
-      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin"
-        >progress_activity</span
-      >
+    <div v-if="isLoading" class="flex justify-center py-16">
+      <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 animate-spin">
+        progress_activity
+      </span>
     </div>
 
     <!-- Sales List -->
-    <div v-else-if="salesStore.sales.length > 0" class="flex flex-col gap-4">
-      <div v-if="filteredSales.length > 0" class="flex flex-col gap-4">
-        <RouterLink
-          v-for="sale in filteredSales"
-          :key="sale.id"
-          :to="`/sales/${sale.id}`"
-          class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-[24px] transition-all duration-200 hover:border-surface-tint"
-        >
-          <!-- Icon -->
-          <div
-            class="shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center"
-          >
-            <span class="material-symbols-outlined text-on-surface-variant text-[24px]"
-              >receipt_long</span
-            >
-          </div>
+    <div v-else-if="filteredSales.length > 0" class="flex flex-col gap-4">
+      <RouterLink
+        v-for="sale in filteredSales"
+        :key="sale.id"
+        :to="`/sales/${sale.id}`"
+        class="flex items-center gap-4 bg-surface-container border border-outline-variant rounded-[1rem] p-[24px] transition-all duration-200 hover:border-surface-tint"
+      >
+        <!-- Icon -->
+        <div class="shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-surface-variant text-[24px]">receipt_long</span>
+        </div>
 
-          <!-- Info -->
-          <div class="flex-1 min-w-0">
-            <p class="text-[14px] font-bold font-display text-on-surface">
-              {{ sale.items.length }} producto{{ sale.items.length > 1 ? 's' : '' }}
-            </p>
-            <p class="mt-0.5 text-[14px] text-on-surface-variant font-sans">
-              {{ formatDate(sale.createdAt) }} · {{ formatTime(sale.createdAt) }}
-            </p>
-          </div>
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <p class="text-[14px] font-bold font-display text-on-surface">
+            {{ sale.items.length }} producto{{ sale.items.length > 1 ? 's' : '' }}
+          </p>
+          <p class="mt-0.5 text-[14px] text-on-surface-variant font-sans">
+            {{ formatDate(sale.createdAt) }} · {{ formatTime(sale.createdAt) }}
+          </p>
+        </div>
 
-          <!-- Total -->
-          <div class="shrink-0 text-right">
-            <p class="text-[17px] font-bold text-surface-tint">${{ formatPrice(sale.total) }}</p>
-            <p v-if="sale.taxIncluded" class="text-[12px] text-on-surface-variant/60">IVA incluido</p>
-          </div>
+        <!-- Total -->
+        <div class="shrink-0 text-right">
+          <p class="text-[17px] font-bold text-surface-tint">${{ formatPrice(sale.total) }}</p>
+          <p v-if="sale.taxIncluded" class="text-[12px] text-on-surface-variant/60">IVA incluido</p>
+        </div>
 
-          <!-- Chevron -->
-          <span class="material-symbols-outlined text-on-surface-variant/50">chevron_right</span>
-        </RouterLink>
-      </div>
-
-      <!-- Empty State for Filter -->
-      <div v-else class="flex flex-col items-center justify-center py-24">
-        <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 mb-4">
-          receipt_long
-        </span>
-        <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
-          No hay ventas en este período
-        </p>
-        <p class="mt-2 text-[14px] text-on-surface-variant/60 text-center font-sans">
-          Las ventas correspondientes aparecerán aquí
-        </p>
-      </div>
+        <!-- Chevron -->
+        <span class="material-symbols-outlined text-on-surface-variant/50">chevron_right</span>
+      </RouterLink>
     </div>
 
-    <!-- Empty State General (No sales at all) -->
+    <!-- Empty State -->
     <div v-else class="flex flex-col items-center justify-center py-24">
       <span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 mb-4">
         receipt_long
       </span>
       <p class="text-[17px] font-display font-semibold text-on-surface-variant text-center">
-        No se han realizado ventas aún
+        No hay ventas en este período
       </p>
       <p class="mt-2 text-[14px] text-on-surface-variant/60 text-center font-sans">
         Las ventas finalizadas aparecerán aquí
