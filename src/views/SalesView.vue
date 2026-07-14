@@ -317,6 +317,20 @@ function formatTime(iso: string): string {
                   </div>
                 </div>
               </button>
+
+              <!-- Separator -->
+              <div class="my-1 border-t border-outline-variant/50" />
+
+              <button
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-sans text-on-surface hover:bg-surface-variant transition-all active:scale-95 text-left"
+                @click="router.push('/shifts'); showShiftMenu = false"
+              >
+                <span class="material-symbols-outlined text-[18px]">history</span>
+                <div>
+                  <div class="font-medium">Historial de turnos</div>
+                  <div class="text-[11px] text-on-surface-variant/60">Ver todos los turnos</div>
+                </div>
+              </button>
             </div>
           </Transition>
         </div>

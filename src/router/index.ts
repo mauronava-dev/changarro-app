@@ -69,6 +69,18 @@ const router = createRouter({
       component: () => import('@/views/ShiftCloseView.vue'),
       meta: { title: 'Cierre de Turno' },
     },
+    {
+      path: '/shifts',
+      name: 'shift-history',
+      component: () => import('@/views/ShiftHistoryView.vue'),
+      meta: { title: 'Historial de Turnos' },
+    },
+    {
+      path: '/shifts/:id',
+      name: 'shift-detail',
+      component: () => import('@/views/ShiftDetailView.vue'),
+      meta: { title: 'Detalle de Turno' },
+    },
   ],
 })
 

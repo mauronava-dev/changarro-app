@@ -60,6 +60,16 @@ export const useShiftsStore = defineStore('shifts', () => {
     return db.sales.where('shiftId').equals(shiftId).reverse().sortBy('createdAt')
   }
 
+  // Get all shifts ordered from newest to oldest
+  async function getAllShifts(): Promise<Shift[]> {
+    return db.shifts.orderBy('id').reverse().toArray()
+  }
+
+  // Get a single shift by numeric ID
+  async function getShiftById(id: number): Promise<Shift | undefined> {
+    return db.shifts.get(id)
+  }
+
   return {
     activeShift,
     isLoading,
@@ -67,5 +77,7 @@ export const useShiftsStore = defineStore('shifts', () => {
     openShift,
     closeShift,
     getShiftSales,
+    getAllShifts,
+    getShiftById,
   }
 })
