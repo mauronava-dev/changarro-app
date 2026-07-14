@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="documentacion/assets/changarro-logo-placeholder.png" alt="Changarro" width="120" height="120" />
+<img src="documentacion/assets/logo.png" alt="Changarro" width="120" height="120" />
 
 # Changarro
 
