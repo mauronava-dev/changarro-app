@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Read version from package.json and derive Android versionCode
+def packageJson = new groovy.json.JsonSlurper().parse(file('../../package.json'))
+def appVersion = packageJson.version  // e.g. "0.3.0"
+def (major, minor, patch) = appVersion.tokenize('.').collect { it.toInteger() }
+// versionCode: major*10000 + minor*100 + patch  → "0.3.0" = 300, "1.0.0" = 10000
+def computedVersionCode = major * 10000 + minor * 100 + patch
+
 android {
     namespace = "com.benditocodigo.changarro"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +14,8 @@ android {
         applicationId "com.benditocodigo.changarro"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode computedVersionCode
+        versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
