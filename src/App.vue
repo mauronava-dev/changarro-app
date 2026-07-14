@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useSettingsStore } from '@/stores/settings'
@@ -12,6 +13,9 @@ const tabs = [
   { label: 'Carrito', icon: 'shopping_cart', route: '/cart', name: 'cart' },
   { label: 'Ventas', icon: 'point_of_sale', route: '/sales', name: 'sales' },
 ]
+
+// Only animate marquee if the business name has 15 or more characters
+const shouldScroll = computed(() => settingsStore.businessName.length >= 15)
 
 function isActive(tabName: string): boolean {
   return route.name === tabName
@@ -29,9 +33,12 @@ function formatPrice(price: number): string {
     style="padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: 8px;"
   >
     <!-- Left: Logo + Name -->
-    <div class="flex items-center">
+    <div
+      class="flex items-center max-w-[160px] overflow-hidden whitespace-nowrap"
+    >
       <span
-        class="font-display text-[22px] font-bold text-primary-fixed-dim truncate max-w-[160px]"
+        class="font-display text-[22px] font-bold text-primary-fixed-dim inline-block"
+        :class="{ 'animate-marquee': shouldScroll }"
         >{{ settingsStore.businessName }}</span
       >
     </div>
@@ -93,3 +100,25 @@ function formatPrice(price: number): string {
     </RouterLink>
   </nav>
 </template>
+
+<style scoped>
+@keyframes marquee-scroll {
+  0%, 30% {
+    transform: translateX(0); /* Pause 3s at starting position */
+  }
+  60% {
+    transform: translateX(-100%); /* Scroll left until completely out of view */
+  }
+  60.01% {
+    transform: translateX(160px); /* Instantly reappear on the right edge (160px width) */
+  }
+  100% {
+    transform: translateX(0); /* Slide back in to the starting position */
+  }
+}
+
+.animate-marquee {
+  will-change: transform;
+  animation: marquee-scroll 10s linear infinite;
+}
+</style>
