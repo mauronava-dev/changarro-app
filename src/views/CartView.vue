@@ -45,9 +45,8 @@ function cancelDelete() {
   itemToDelete.value = null
 }
 
-async function finalizeSale() {
-  await cartStore.finalizeSale()
-  router.push('/sales')
+function goToCheckout() {
+  router.push('/checkout')
 }
 </script>
 
@@ -64,7 +63,7 @@ async function finalizeSale() {
         v-if="cartStore.items.length > 0"
         class="uppercase tracking-wider text-label-md bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant text-on-surface-variant"
       >
-        {{ cartStore.itemCount }} ITEMS
+        {{ cartStore.itemCount }} PRODUCTOS
       </span>
     </div>
 
@@ -192,7 +191,7 @@ async function finalizeSale() {
       <!-- Checkout Button -->
       <button
         class="w-full py-6 bg-surface-tint text-on-primary rounded-full text-[19px] font-bold flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-xl active:scale-95"
-        @click="finalizeSale"
+        @click="goToCheckout"
       >
         <span
           class="material-symbols-outlined text-[19px]"
@@ -200,7 +199,7 @@ async function finalizeSale() {
         >
           payments
         </span>
-        Finalizar Venta
+        Cobrar
       </button>
     </div>
   </div>

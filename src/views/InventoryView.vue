@@ -73,7 +73,7 @@ const filteredProducts = computed(() => {
       <span
         class="text-label-md bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant text-on-surface-variant"
       >
-        {{ filteredProducts.length }} ITEMS
+        {{ filteredProducts.length }} PRODUCTOS
       </span>
     </div>
 

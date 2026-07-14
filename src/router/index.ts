@@ -16,6 +16,12 @@ const router = createRouter({
       meta: { title: 'Carrito' },
     },
     {
+      path: '/checkout',
+      name: 'checkout',
+      component: () => import('@/views/CheckoutView.vue'),
+      meta: { title: 'Cobrar' },
+    },
+    {
       path: '/sales',
       name: 'sales',
       component: () => import('@/views/SalesView.vue'),
