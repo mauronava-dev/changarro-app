@@ -32,6 +32,8 @@ export interface Sale {
   taxRate: number
   taxAmount: number
   total: number
+  receivedAmount?: number
+  changeAmount?: number
   createdAt: string
 }
 

@@ -143,6 +143,33 @@ function formatTime(iso: string): string {
             ${{ formatPrice(sale.total) }}
           </span>
         </div>
+
+        <!-- Cash Details Separator -->
+        <div v-if="sale.receivedAmount !== undefined" class="h-px bg-outline-variant my-4"></div>
+
+        <!-- Cash received -->
+        <div v-if="sale.receivedAmount !== undefined" class="flex items-center justify-between mb-3">
+          <span
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
+          >
+            Efectivo Recibido
+          </span>
+          <span class="text-[15px] font-bold text-on-surface">
+            ${{ formatPrice(sale.receivedAmount) }}
+          </span>
+        </div>
+
+        <!-- Change returned -->
+        <div v-if="sale.changeAmount !== undefined" class="flex items-center justify-between">
+          <span
+            class="uppercase tracking-wider text-[14px] font-semibold text-on-surface-variant font-display"
+          >
+            Cambio
+          </span>
+          <span class="text-[16px] font-bold text-primary-fixed-dim font-display">
+            ${{ formatPrice(sale.changeAmount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>

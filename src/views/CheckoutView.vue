@@ -91,7 +91,7 @@ async function handleConfirmSale() {
   if (isButtonDisabled.value || isSubmitting.value) return
   isSubmitting.value = true
   try {
-    await cartStore.finalizeSale()
+    await cartStore.finalizeSale(cashAmount.value, change.value)
     router.push('/sales')
   } catch (error) {
     console.error('Error finalizando la venta:', error)

@@ -100,7 +100,7 @@ export const useCartStore = defineStore('cart', () => {
     items.value = []
   }
 
-  async function finalizeSale(): Promise<Sale> {
+  async function finalizeSale(receivedAmount?: number, changeAmount?: number): Promise<Sale> {
     const salesStore = useSalesStore()
 
     const saleItems: SaleItem[] = items.value.map((item) => ({
@@ -119,6 +119,8 @@ export const useCartStore = defineStore('cart', () => {
       taxRate: taxEnabled.value ? taxRate.value : 0,
       taxAmount: tax.value,
       total: total.value,
+      receivedAmount,
+      changeAmount,
       createdAt: new Date().toISOString(),
     }
 
